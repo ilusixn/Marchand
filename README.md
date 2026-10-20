@@ -89,8 +89,7 @@ Everything runs on your computer. Your chats, files and trained AIs stay in a fo
 ### Make your own AI (Training)
 The Training tab is the heart of the app.
 
-- **Train with Claude**: choose your local AI (the *student*) and a *teacher* (Claude on your subscription, Grok, or any model with a key) and press
-  **Start teaching**. Your AI attempts real coding tasks in a sandbox folder, the **tests decide pass or fail**, and the teacher reviews every failure,
+- **Start teaching**. Your AI attempts real coding tasks in a sandbox folder, the **tests decide pass or fail**, and the teacher reviews every failure,
   writes lessons and shows a worked solution. Press **Save AI** at the end to get a new model with those lessons and examples built in.
 - Every teacher is briefed that it is teaching a smaller AI and how to teach it well.
 - **62 built-in tasks with real tests** in Python, JavaScript, TypeScript, C, C++, C#, Java, Go, Rust, PHP, Ruby, Perl, Lua, Bash and SQL, plus
@@ -224,9 +223,6 @@ terms.
 
 **You may not** sell it, bundle it into a paid product or use it commercially without the author's written permission. Contact the author for a
 commercial license.
-
-The **name "Marchand Studio" and the M logo are not part of the license**: a fork or modified copy must use its own name and logo and say it is based on
-Marchand Studio (see [`TRADEMARK.md`](TRADEMARK.md)).
 
 Copyright (c) 2026 ilusixne. The bundled Python in the Windows installer is licensed under the Python Software Foundation License (included with it).
 
