@@ -566,6 +566,9 @@ with sync_playwright() as p:
         for sec in ("Train with Claude", "Advanced", "Marchand Coder", "Reverse engineering"):
             pg.click(".pnav div:has-text('%s')" % sec); pg.wait_for_selector(".tnotice"); assert "Follow your teacher provider's terms of use." in pg.inner_text(".tnotice"), sec
     step("Training pages show the 'follow your teacher provider's terms of use' notice", t_terms_notice)
+    def t_about_build():
+        tab("Chat"); pg.click("#setBtn"); pg.wait_for_selector("#sAbout"); assert "build " in pg.inner_text("#sAbout") and "PolyForm" in pg.inner_text("#sAbout"), pg.inner_text("#sAbout"); pg.click("#mSet [data-close]")
+    step("Settings About shows the build", t_about_build)
     def t_plus_menu():
         tab("Chat"); pg.click("#plusBtn"); pg.wait_for_selector("#plusMenu.on")
         items = pg.eval_on_selector_all("#plusMenu .pi", "e=>e.map(x=>x.dataset.item)"); assert items[:5] == ["files", "folder", "slash", "connectors", "plugins"], items

@@ -15,6 +15,7 @@ shutil.copytree('..','stage/app',ignore=shutil.ignore_patterns('tests','installe
 PY
 x86_64-w64-mingw32-windres launcher.rc -O coff -o launcher_res.o
 x86_64-w64-mingw32-gcc -municode -mwindows -O2 -o stage/MarchandStudio.exe launcher.c launcher_res.o -static
+date -u +"%Y-%m-%d %H:%M" > stage/app/BUILD.txt
 cp ../assets/icon.ico stage/icon.ico
 cp ../LICENSE stage/LICENSE.txt
 cp ../NOTICE stage/NOTICE.txt

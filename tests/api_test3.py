@@ -387,4 +387,6 @@ for teacher_id in ("anthropic::claude-test", "custom::mock-model", "claude-code:
         if s["status"] != "running": break
         time.sleep(0.5)
     ok("training with teacher %s finished and the teacher was used" % teacher_id, s["status"] == "finished" and s["counters"]["student_runs"] >= 1, [s["status"], s.get("log", [])[-3:]])
+
+ok("settings report the app build so a stale copy can be recognised", J("/api/settings").get("app_build") not in (None, ""), J("/api/settings").get("app_build"))
 print("ALL OK (%d checks)" % n[0])

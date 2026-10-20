@@ -169,17 +169,50 @@ def single_instance():
     return ctypes.windll.kernel32.GetLastError() != 183
 
 
+def tray_window():
+    import ctypes
+    return ctypes.windll.user32.FindWindowW("MarchandStudioTray", None)
+
+
+def replace_old_instance():
+    import ctypes
+    h = tray_window()
+    if h:
+        ctypes.windll.user32.PostMessageW(h, 0x0111, 1003, 0)
+    deadline = time.time() + 12
+    while tray_window() and time.time() < deadline:
+        time.sleep(0.3)
+    time.sleep(1.0)
+    while KEEP:
+        ctypes.windll.kernel32.CloseHandle(KEEP.pop())
+    return single_instance()
+
+
+def running_info():
+    try:
+        return json.loads((DATA / "running.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
 def main():
     tray_on = IS_WIN and not os.environ.get("MARCHAND_NO_TRAY")
     if tray_on and not single_instance():
-        try:
-            open_app_window((DATA / "url.txt").read_text().strip())
-        except OSError:
-            pass
-        return
+        info = running_info()
+        if info.get("build") == server.BUILD and info.get("url"):
+            open_app_window(info["url"])
+            return
+        report_log("An older Marchand (build %s) is still running; replacing it with build %s." % (info.get("build") or "unknown", server.BUILD))
+        if not replace_old_instance():
+            try:
+                open_app_window((DATA / "url.txt").read_text().strip())
+            except OSError:
+                pass
+            return
     srv = server.make_server(8765)
     url = "http://127.0.0.1:%d" % server.PORT["n"]
     (DATA / "url.txt").write_text(url)
+    (DATA / "running.json").write_text(json.dumps({"url": url, "build": server.BUILD}), encoding="utf-8")
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     print("Marchand server on " + url, flush=True)
     quit_ev = threading.Event()

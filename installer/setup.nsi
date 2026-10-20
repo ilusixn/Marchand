@@ -20,6 +20,11 @@ SetCompressor /SOLID lzma
 !insertmacro MUI_LANGUAGE "English"
 
 Section "Install"
+  FindWindow $0 "MarchandStudioTray" ""
+  IntCmp $0 0 notrunning_i
+  SendMessage $0 0x0111 1003 0
+  Sleep 3500
+  notrunning_i:
   nsExec::Exec `powershell -NoProfile -Command "Get-Process pythonw -ErrorAction SilentlyContinue | Where-Object { $$_.Path -like '$INSTDIR\*' } | Stop-Process -Force"`
   RMDir /r "$INSTDIR\app"
   RMDir /r "$INSTDIR\python"
@@ -38,6 +43,11 @@ Section "Install"
 SectionEnd
 
 Section "Uninstall"
+  FindWindow $0 "MarchandStudioTray" ""
+  IntCmp $0 0 notrunning_u
+  SendMessage $0 0x0111 1003 0
+  Sleep 3500
+  notrunning_u:
   nsExec::Exec `powershell -NoProfile -Command "Get-Process pythonw -ErrorAction SilentlyContinue | Where-Object { $$_.Path -like '$INSTDIR\*' } | Stop-Process -Force"`
   Delete "$DESKTOP\Marchand Studio.lnk"
   RMDir /r "$SMPROGRAMS\Marchand Studio"

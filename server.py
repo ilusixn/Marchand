@@ -38,6 +38,18 @@ import teacher
 import trainer
 
 WEB = Path(__file__).resolve().parent / "web"
+
+
+def _build():
+    if os.environ.get("MARCHAND_BUILD"):
+        return os.environ["MARCHAND_BUILD"]
+    try:
+        return (WEB.parent / "BUILD.txt").read_text(encoding="utf-8").strip() or "dev"
+    except OSError:
+        return "dev"
+
+
+BUILD = _build()
 DATA = Path(os.environ.get("MARCHAND_HOME", Path.home() / ".marchand"))
 CONVOS = DATA / "conversations"
 SETTINGS = DATA / "settings.json"
@@ -71,6 +83,7 @@ def mask(key):
 def public_settings():
     s = load_settings()
     s["providers"] = {p: dict(v, key=mask(v.get("key", ""))) for p, v in s.get("providers", {}).items()}
+    s["app_build"] = BUILD
     return s
 
 
