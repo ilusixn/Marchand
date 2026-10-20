@@ -146,8 +146,22 @@ def user_line(text, images):
 
 
 def perm_config(server_url, token, run_id):
-    return json.dumps({"mcpServers": {"marchand": {"command": sys.executable, "args": [str(HERE / "cc_perm_mcp.py")],
-                                                   "env": {"MARCHAND_URL": server_url, "MARCHAND_TOKEN": token, "MARCHAND_RUN": run_id}}}})
+    cfg = json.dumps({"mcpServers": {"marchand": {"command": sys.executable, "args": [str(HERE / "cc_perm_mcp.py")],
+                                                  "env": {"MARCHAND_URL": server_url, "MARCHAND_TOKEN": token, "MARCHAND_RUN": run_id}}}})
+    DATA.mkdir(parents=True, exist_ok=True)
+    f = DATA / ("cc-perm-%s.json" % run_id)
+    f.write_text(cfg, encoding="utf-8")
+    return str(f)
+
+
+def prompt_file(text):
+    import hashlib
+    d = DATA / "cc-prompts"
+    d.mkdir(parents=True, exist_ok=True)
+    f = d / (hashlib.sha1(text.encode("utf-8")).hexdigest()[:16] + ".txt")
+    if not f.exists():
+        f.write_text(text, encoding="utf-8")
+    return str(f)
 
 
 def build_args(model, effort=None, tools=True, resume=None, system=None, append=None, perm=None, persist=True, max_turns=None, add_dirs=()):
@@ -162,9 +176,9 @@ def build_args(model, effort=None, tools=True, resume=None, system=None, append=
     if resume:
         a += ["--resume", resume]
     if system:
-        a += ["--system-prompt", system]
+        a += ["--system-prompt-file", prompt_file(system)]
     if append:
-        a += ["--append-system-prompt", append]
+        a += ["--append-system-prompt-file", prompt_file(append)]
     if perm:
         a += perm
     for d in add_dirs or []:
@@ -179,13 +193,36 @@ def build_args(model, effort=None, tools=True, resume=None, system=None, append=
 def stream(args, cwd, text, images, on_event, cancel):
     proc = subprocess.Popen(args, cwd=str(cwd), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                             text=True, encoding="utf-8", errors="replace", bufsize=1)
-    proc.stdin.write(user_line(text, images))
-    proc.stdin.close()
+    lock = threading.Lock()
+    clock = {"last": time.time(), "start": time.time()}
+    emit = on_event
+
+    def on_event(ev):
+        with lock:
+            clock["last"] = time.time()
+            emit(ev)
+
+    def feed():
+        try:
+            proc.stdin.write(user_line(text, images))
+            proc.stdin.close()
+        except (OSError, ValueError):
+            pass
+    threading.Thread(target=feed, daemon=True).start()
     err_lines = []
     err_reader = threading.Thread(target=lambda: err_lines.extend(proc.stderr.readlines()), daemon=True)
     err_reader.start()
     stopper = threading.Thread(target=lambda: (cancel.wait(), proc.poll() is None and proc.kill()), daemon=True)
     stopper.start()
+
+    def beat():
+        while proc.poll() is None and not cancel.is_set():
+            time.sleep(1)
+            if time.time() - clock["last"] >= 10:
+                with lock:
+                    clock["last"] = time.time()
+                    emit({"type": "waiting", "seconds": int(time.time() - clock["start"])})
+    threading.Thread(target=beat, daemon=True).start()
     st = {"session": None, "text": "", "result": None, "tools": {}, "model": None, "is_error": False}
     for line in proc.stdout:
         if cancel.is_set():
@@ -242,6 +279,12 @@ def stream(args, cwd, text, images, on_event, cancel):
                       "session": e.get("session_id"), "error": st["is_error"], "subtype": e.get("subtype"), "today_cost": u.get("today_cost")})
     proc.wait()
     err_reader.join(10)
+    for a in args:
+        if os.path.basename(str(a)).startswith("cc-perm-"):
+            try:
+                os.remove(a)
+            except OSError:
+                pass
     if cancel.is_set():
         raise Cancelled()
     if st["result"] is None and proc.returncode:

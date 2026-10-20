@@ -18,6 +18,24 @@ Chat, code, make pictures and *train your own local AI* with Claude, Grok or any
 
 ---
 
+## Screenshots
+
+<table>
+  <tr>
+    <td width="50%"><a href="docs/screenshots/model-picker-library.png"><img src="docs/screenshots/model-picker-library.png" alt="Model picker with the downloadable model library"></a><br><sub><b>One picker for every AI.</b> Switch between your own AIs, Claude, local and cloud models, or open the library of 70+ models with a Download button and a link for each.</sub></td>
+    <td width="50%"><a href="docs/screenshots/training.png"><img src="docs/screenshots/training.png" alt="Training tab"></a><br><sub><b>Train your own AI.</b> Pick a student and a teacher, choose from 46+ tasks in many languages, and save the result as your own model.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><a href="docs/screenshots/models-library.png"><img src="docs/screenshots/models-library.png" alt="Models library with AMD detection"></a><br><sub><b>Knows your PC.</b> Detects your graphics card (AMD Radeon shown) and tells you which models run great, which run slower and which are too big.</sub></td>
+    <td width="50%"><a href="docs/screenshots/images-tab.png"><img src="docs/screenshots/images-tab.png" alt="Images tab"></a><br><sub><b>Pictures.</b> Forge, Automatic1111, SD.Next, ComfyUI or cloud models from the same window, with download links when a tool is missing.</sub></td>
+  </tr>
+  <tr>
+    <td colspan="2"><a href="docs/screenshots/help.png"><img src="docs/screenshots/help.png" alt="Built-in Help"></a><br><sub><b>Built-in guides.</b> Every feature is explained inside the app: models, training, Claude, pictures, plugins and settings.</sub></td>
+  </tr>
+</table>
+
+---
+
 ## What is Marchand Studio?
 
 Marchand Studio is a desktop application that puts every kind of AI you use into **one calm, fast interface**, and adds something most chat apps do not
@@ -55,6 +73,11 @@ Everything runs on your computer. Your chats, files and trained AIs stay in a fo
   **Search this PC for AI agents** button that also looks for Codex CLI, Gemini CLI, Aider, Goose and opencode.
 - **Effort selector** from Low to Max, a context meter and **plan usage meters** (5-hour session, weekly limit, extra-usage status) in the side panel.
 - Edits and commands from Claude appear as the same **approval cards** as every other model.
+
+### Always see what the AI is doing
+- A grey **Thinking** box streams the model's reasoning live, and a status pill shows the current step ("Reading file...", "Running...", "Writing the answer...") with a timer.
+- In Code, every file read, edit and command is a grey card you can open, with its full result and diff.
+- Type while the AI works: your message goes into a **queue** and sends itself when the AI finishes, or press **Send now** to interrupt and send immediately.
 
 ### A coding agent you can trust
 - Plans, reads, edits, runs tests and refuses to finish work it did not verify.

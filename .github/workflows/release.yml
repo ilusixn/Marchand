@@ -18,6 +18,11 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ inputs.tag }}
         run: |
-          gh release create "$TAG" downloads/MarchandStudio-Setup.exe \
-            --title "Marchand Studio $TAG" \
-            --notes-file RELEASE_NOTES.md
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" downloads/MarchandStudio-Setup.exe --clobber
+            gh release edit "$TAG" --notes-file RELEASE_NOTES.md
+          else
+            gh release create "$TAG" downloads/MarchandStudio-Setup.exe \
+              --title "Marchand Studio $TAG" \
+              --notes-file RELEASE_NOTES.md
+          fi

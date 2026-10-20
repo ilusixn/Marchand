@@ -541,6 +541,26 @@ with sync_playwright() as p:
         assert users.count("file0.dbc") == 1 and "\x00" not in users
         shown = pg.inner_text("#list"); assert "my project" in shown and shown.count("file5.dbc") == 0, shown[:300]
     step("dropping a folder shows ONE folder chip (icon + name), sends file list and text contents only", t_folder_drop)
+    def t_activity_queue():
+        tab("Chat"); pick_model("claude-code::sonnet"); pg.evaluate("ST.attach=[];renderChips()")
+        send("TASK:think please"); pg.wait_for_selector(".live", timeout=10000); wait_idle()
+        assert pg.query_selector(".think"), "no thinking block"; th = pg.inner_text(".think"); assert "Thought for" in th or "Thinking" in th, th
+        assert pg.eval_on_selector(".think", "e=>e.open") is False; pg.click(".think summary"); assert "Plan: answer briefly" in pg.inner_text(".think .tt")
+        assert "answer after thinking" in pg.inner_text("#list"); assert pg.query_selector(".live") is None
+        send("TASK:slow first"); pg.wait_for_function("ST.running", timeout=5000)
+        pg.fill("#inp", "second message while busy"); assert pg.is_visible("#qBtn") and pg.is_visible("#nowBtn"), "queue buttons"
+        pg.press("#inp", "Enter"); pg.wait_for_selector(".qitem"); assert "second message while busy" in pg.inner_text("#queue"); assert pg.input_value("#inp") == ""
+        pg.fill("#inp", "third message"); pg.click("#qBtn"); assert pg.eval_on_selector_all(".qitem", "e=>e.length") == 2
+        pg.click(".qitem >> nth=1 >> button:has-text('\u2715')"); assert pg.eval_on_selector_all(".qitem", "e=>e.length") == 1
+        pg.wait_for_function("document.querySelectorAll('.qitem').length==0 && !ST.running", timeout=40000)
+        txt = pg.inner_text("#list"); assert "slow reply done" in txt and "second message while busy" in txt and "hello from fake claude" in txt, txt[-400:]
+        assert txt.index("slow reply done") < txt.index("second message while busy")
+        send("TASK:slow again"); pg.wait_for_function("ST.running", timeout=5000); pg.fill("#inp", "urgent one"); pg.click("#nowBtn")
+        pg.wait_for_function("!ST.running", timeout=40000); txt = pg.inner_text("#list"); assert "Stopped." in txt and txt.rstrip().endswith("(resumed=" + txt.rstrip().split("resumed=")[-1]) or "hello from fake claude" in txt.split("urgent one")[-1], txt[-300:]
+        assert "urgent one" in txt and txt.count("slow reply done") == 1, txt[-500:]
+        send("TASK:limit now"); wait_idle(); assert "hit your limit" in pg.inner_text("#list"), pg.inner_text("#list")[-300:]
+        pick_model("qwen2.5-coder:14b")
+    step("live activity (thinking, status), message queue, Send now, errors shown", t_activity_queue)
     def t_plus_menu():
         tab("Chat"); pg.click("#plusBtn"); pg.wait_for_selector("#plusMenu.on")
         items = pg.eval_on_selector_all("#plusMenu .pi", "e=>e.map(x=>x.dataset.item)"); assert items[:5] == ["files", "folder", "slash", "connectors", "plugins"], items

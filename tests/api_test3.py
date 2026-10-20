@@ -345,4 +345,46 @@ class _P:
 ok("winquiet adds CREATE_NO_WINDOW to every subprocess on Windows", winquiet.install(_P, force=True) and _P(["x"]).kw["creationflags"] == 0x08000000 and _P(["x"], creationflags=0x200).kw["creationflags"] == 0x08000200)
 ok("winquiet installs only once", winquiet.install(_P, force=True) is False)
 ok("winquiet leaves subprocess alone on other systems", winquiet.install(type("Q", (), {"__init__": lambda self, *a, **k: None}), force=False) is False)
+
+code = """
+import sys, threading, os
+sys.path.insert(0, %r)
+import claude_code
+ev = []
+st = claude_code.stream([sys.executable, %r, "--model", "haiku"], os.getcwd(), "BIG " + "x" * 700000, [], lambda e: ev.append(e["type"]), threading.Event())
+print("ok", len(st["text"]) > 0, "token" in ev)
+""" % (os.path.dirname(HERE), os.path.join(HERE, "fake_claude.py"))
+try:
+    fl = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, timeout=60, env=dict(os.environ, FAKE_CC_FLOOD="1", MARCHAND_HOME=os.path.join(HERE, "work", "flood")))
+    flood_ok = "ok True True" in fl.stdout
+except subprocess.TimeoutExpired:
+    flood_ok = False
+ok("a huge message does not deadlock the pipe to Claude (child floods stdout before reading stdin)", flood_ok)
+cc = claude_code if "claude_code" in dir() else None
+import claude_code as _cc
+a_ = _cc.build_args("sonnet", "low", system="S" * 5 + "\nline2", append="A" * 5)
+ok("system prompts are passed as files (no huge or multi-line command lines)", "--system-prompt-file" in a_ and "--append-system-prompt-file" in a_ and "--system-prompt" not in a_ and open(a_[a_.index("--system-prompt-file") + 1]).read() == "SSSSS\nline2")
+pc = _cc.perm_config("http://127.0.0.1:1", "tok", "r1")
+ok("permission bridge config is a file, not inline JSON with the token", os.path.isfile(pc) and "tok" in open(pc).read()); os.remove(pc)
+
+# ---- every AI works everywhere: chat, code and training with each kind of provider
+J("/api/settings", {"auto_approve": True, "providers": {"custom": {"key": "", "base": "http://127.0.0.1:11556/oai"}, "anthropic": {"key": "k", "base": "http://127.0.0.1:11556"}}})
+for mdl in ("qwen2.5-coder:14b", "custom::mock-model", "anthropic::claude-test", "claude-code::sonnet"):
+    ev = events("/api/run", {"mode": "chat", "model": mdl, "history": [], "user": "say hi", "effort": "low"})
+    done = [e for e in ev if e["type"] == "done"]
+    ok("chat works with " + mdl, done and "error" not in [e["type"] for e in ev] and any(m["role"] == "assistant" and (m.get("content") or "").strip() for m in done[0]["history"]), [e["type"] for e in ev])
+for mdl in ("custom::mock-model", "anthropic::claude-test", "claude-code::sonnet"):
+    pm = proj("matrix_" + re.sub(r"\W", "", mdl)); open(pm + "/MARCHAND.md", "w").write("")
+    ev = events("/api/run", {"mode": "code", "model": mdl, "project": pm, "history": [], "user": "TASK:ccedit" if mdl.startswith("claude-code") else "fix the test", "effort": "low"})
+    ok("code works with " + mdl, "done" in [e["type"] for e in ev] and "error" not in [e["type"] for e in ev], [e["type"] for e in ev][-6:])
+    if mdl.startswith("claude-code"): ok("code edit landed with " + mdl, "a + b" in open(pm + "/calc.py").read())
+for teacher_id in ("anthropic::claude-test", "custom::mock-model", "claude-code::sonnet"):
+    r = J("/api/training/start", {"name": "teach-" + teacher_id, "student": "qwen2.5-coder:14b", "teacher": teacher_id, "demos": "teacher", "rounds": 1, "max_steps": 6,
+                                  "tasks": ["pagination"], "learn": True, "keep_successes": False, "persona": True, "consolidate": False})
+    ok("training starts with teacher " + teacher_id, bool(r.get("id")), r)
+    for _ in range(240):
+        s = J("/api/training/session?id=" + r["id"])
+        if s["status"] != "running": break
+        time.sleep(0.5)
+    ok("training with teacher %s finished and the teacher was used" % teacher_id, s["status"] == "finished" and s["counters"]["student_runs"] >= 1, [s["status"], s.get("log", [])[-3:]])
 print("ALL OK (%d checks)" % n[0])
