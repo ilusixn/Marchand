@@ -109,7 +109,7 @@ role, then re-implement and compare. Educational and defensive use only: your ow
 ## Install
 
 ### Windows (recommended)
-1. Download `MarchandStudio-Setup.exe` from the Releases page (or build it, see below).
+1. Download **[MarchandStudio-Setup.exe](downloads/MarchandStudio-Setup.exe?raw=1)** (about 7.7 MB), or build it yourself (see below).
 2. Run it, accept the license and press Install. No administrator rights needed.
 3. Start **Marchand Studio** from the Desktop or Start menu.
 
