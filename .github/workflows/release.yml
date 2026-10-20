@@ -1,0 +1,23 @@
+name: Release installer
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to create (for example v0.1.0)"
+        required: true
+        default: "v0.1.0"
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish the release with the Windows installer attached
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          gh release create "$TAG" downloads/MarchandStudio-Setup.exe \
+            --title "Marchand Studio $TAG" \
+            --notes-file RELEASE_NOTES.md
