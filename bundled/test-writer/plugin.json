@@ -1,0 +1,22 @@
+{
+  "name": "test-writer",
+  "version": "1.0.0",
+  "author": "Marchand",
+  "icon": "\ud83e\uddea",
+  "description": "Write focused tests in the project's own test style.",
+  "system": "",
+  "commands": [
+    {
+      "name": "tests",
+      "description": "Write tests for a file or function",
+      "prompt": "Write tests for {args}. First find the existing test framework and a similar existing test and copy its style. Cover normal cases, edge cases (empty, None, zero, large, unicode) and error paths. Run the tests, fix failures in the TEST unless they reveal a real bug (then tell me), and finish only when they pass."
+    },
+    {
+      "name": "fix-tests",
+      "description": "Fix failing tests",
+      "prompt": "Run the project's test suite, find the failing tests, determine the root cause of each (code bug or wrong test), fix the cause, and re-run until everything passes. Do not delete or skip tests. {args}"
+    }
+  ],
+  "skills": [],
+  "tools": []
+}

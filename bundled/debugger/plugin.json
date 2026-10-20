@@ -1,0 +1,23 @@
+{
+  "name": "debugger",
+  "version": "1.0.0",
+  "author": "Marchand",
+  "icon": "\ud83d\udc1e",
+  "description": "Systematic debugging: reproduce, isolate, fix, regression-test.",
+  "system": "",
+  "commands": [
+    {
+      "name": "debug",
+      "description": "Debug an error or odd behaviour",
+      "prompt": "Debug this: {args}\nFollow the method: reproduce it, read the error bottom-up, form one hypothesis at a time and test it, find the ROOT cause, fix it minimally, add a regression test, and verify. Explain the cause in two sentences at the end."
+    }
+  ],
+  "skills": [
+    {
+      "name": "debug-method",
+      "description": "Step-by-step debugging method",
+      "file": "skills/debug-method.md"
+    }
+  ],
+  "tools": []
+}

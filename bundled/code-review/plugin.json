@@ -1,0 +1,28 @@
+{
+  "name": "code-review",
+  "version": "1.0.0",
+  "author": "Marchand",
+  "icon": "\ud83d\udd0d",
+  "description": "Review your uncommitted changes like a senior engineer.",
+  "system": "",
+  "commands": [
+    {
+      "name": "review",
+      "description": "Review the current git changes",
+      "prompt": "Review my uncommitted changes. Run `git diff` (and `git diff --staged`), read the changed files for context, then report: bugs, missing edge cases, security problems, style mismatches, missing tests. Order by severity, cite file:line, and propose a concrete fix for each. Do not edit files. {args}"
+    },
+    {
+      "name": "review-file",
+      "description": "Review one file in depth",
+      "prompt": "Review the file {args} in depth: correctness, edge cases, readability, performance, tests. Do not edit files; give a ranked list with line numbers and fixes."
+    }
+  ],
+  "skills": [
+    {
+      "name": "review-checklist",
+      "description": "Detailed code review checklist",
+      "file": "skills/review-checklist.md"
+    }
+  ],
+  "tools": []
+}

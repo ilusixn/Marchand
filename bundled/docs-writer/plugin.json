@@ -1,0 +1,27 @@
+{
+  "name": "docs-writer",
+  "version": "1.0.0",
+  "author": "Marchand",
+  "icon": "\ud83d\udcdd",
+  "description": "Explain code and write documentation.",
+  "system": "",
+  "commands": [
+    {
+      "name": "explain",
+      "description": "Explain a file, function or the whole project",
+      "prompt": "Explain {args} to a new teammate: purpose, main flow, key functions, gotchas. Read the code first; do not guess. Do not edit files."
+    },
+    {
+      "name": "docs",
+      "description": "Write or improve documentation",
+      "prompt": "Write clear documentation for {args}: docstrings/comments only where the codebase uses them, plus a README section if appropriate. Match existing style. Do not change behaviour."
+    },
+    {
+      "name": "init",
+      "description": "Create a CODER.md project guide",
+      "prompt": "Explore this project and create a CODER.md in the project root that tells an AI coding assistant: what the project is, how to build/run/test it (verify the commands by running them), folder layout, code conventions, and pitfalls. Keep it under 80 lines."
+    }
+  ],
+  "skills": [],
+  "tools": []
+}

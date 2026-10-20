@@ -1,0 +1,17 @@
+{
+  "name": "refactor-assistant",
+  "version": "1.0.0",
+  "author": "Marchand",
+  "icon": "\ud83e\uddf9",
+  "description": "Safe, step-by-step refactoring with tests as a safety net.",
+  "system": "",
+  "commands": [
+    {
+      "name": "refactor",
+      "description": "Refactor a target safely",
+      "prompt": "Refactor {args}. First run the tests to get a baseline (add characterization tests if there are none). Then work in small steps (extract, rename, move), running the tests after each step. Keep behaviour identical. Update every caller (search for usages). Finish with a summary."
+    }
+  ],
+  "skills": [],
+  "tools": []
+}

@@ -1,0 +1,36 @@
+{
+  "name": "python-tools",
+  "version": "1.0.0",
+  "author": "Marchand",
+  "icon": "\ud83d\udc0d",
+  "description": "Python helpers: pytest, lint and type-check as tools.",
+  "system": "This project may be Python. Prefer the run_pytest, py_lint and py_types tools over raw shell commands when checking Python code.",
+  "commands": [],
+  "skills": [],
+  "tools": [
+    {
+      "name": "run_pytest",
+      "description": "Run pytest on a path (default tests).",
+      "parameters": {
+        "path": "string"
+      },
+      "command": "python -m pytest -q {path}"
+    },
+    {
+      "name": "py_lint",
+      "description": "Lint Python code with ruff (falls back to pyflakes).",
+      "parameters": {
+        "path": "string"
+      },
+      "command": "python -m ruff check {path} || python -m pyflakes {path}"
+    },
+    {
+      "name": "py_types",
+      "description": "Type-check with mypy.",
+      "parameters": {
+        "path": "string"
+      },
+      "command": "python -m mypy {path}"
+    }
+  ]
+}

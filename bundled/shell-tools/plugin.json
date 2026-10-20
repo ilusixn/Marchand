@@ -1,0 +1,20 @@
+{
+  "name": "shell-tools",
+  "version": "1.0.0",
+  "author": "Marchand",
+  "icon": "\ud83e\uddf0",
+  "description": "Handy read-only tools: fetch a web page or API response.",
+  "system": "",
+  "commands": [],
+  "skills": [],
+  "tools": [
+    {
+      "name": "fetch_url",
+      "description": "Download a web page or API response (first 6000 chars).",
+      "parameters": {
+        "url": "string"
+      },
+      "command": "python -c \"import sys,urllib.request as u;print(u.urlopen(sys.argv[1],timeout=20).read(6000).decode('utf-8','replace'))\" {url}"
+    }
+  ]
+}

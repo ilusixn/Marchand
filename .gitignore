@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+installer/stage/
+installer/*.o
+installer/MarchandStudio-Setup.exe
+tests/home/
+tests/work/
+tests/proj/
+tests/*.log
+tests/*.pid
+tests/*.png
+tests/*.jsonl
+tests/open_urls.log
+fail_*.png
+.marchand/

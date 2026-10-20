@@ -1,0 +1,50 @@
+{
+  "name": "git-helper",
+  "version": "1.0.0",
+  "author": "Marchand",
+  "icon": "\ud83c\udf3f",
+  "description": "Commit messages, PR descriptions and changelogs from your diff.",
+  "system": "",
+  "commands": [
+    {
+      "name": "commit-message",
+      "description": "Write a commit message for current changes",
+      "prompt": "Run `git diff --staged` (or `git diff` if nothing is staged) and `git log --oneline -10` to learn the repo's message style. Write ONE commit message in that style: short imperative subject (max 72 chars), blank line, a body explaining what and why. Do not run git commit."
+    },
+    {
+      "name": "pr-description",
+      "description": "Write a pull request description",
+      "prompt": "Run `git log --oneline main..HEAD` (or the right base branch) and `git diff main...HEAD --stat`, read the key changes, and write a PR description: Summary, Changes, How it was tested, Risks. {args}"
+    },
+    {
+      "name": "changelog",
+      "description": "Write changelog notes from recent commits",
+      "prompt": "Run `git log --oneline -30`, group the commits into Added / Changed / Fixed, and write user-facing changelog notes in plain English. {args}"
+    }
+  ],
+  "skills": [],
+  "tools": [
+    {
+      "name": "git_status",
+      "description": "Show git status and branch.",
+      "parameters": {},
+      "command": "git status --short --branch"
+    },
+    {
+      "name": "git_diff",
+      "description": "Show uncommitted changes (optionally for one path).",
+      "parameters": {
+        "path": "string"
+      },
+      "command": "git diff -- {path}"
+    },
+    {
+      "name": "git_log",
+      "description": "Show recent commits.",
+      "parameters": {
+        "count": "integer"
+      },
+      "command": "git log --oneline -n {count}"
+    }
+  ]
+}

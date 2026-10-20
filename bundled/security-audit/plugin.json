@@ -1,0 +1,17 @@
+{
+  "name": "security-audit",
+  "version": "1.0.0",
+  "author": "Marchand",
+  "icon": "\ud83d\udee1\ufe0f",
+  "description": "Hunt for common vulnerabilities and unsafe patterns.",
+  "system": "",
+  "commands": [
+    {
+      "name": "audit",
+      "description": "Security audit of the project or a path",
+      "prompt": "Audit {args} for security problems: injection (SQL/shell/HTML), path traversal, hard-coded secrets, unsafe deserialization, weak crypto, missing auth checks, unsafe file/network handling, vulnerable dependency usage. Search the code with the search tool, read the suspicious spots, and report findings ranked by severity with file:line and a fix. Do not edit unless I ask."
+    }
+  ],
+  "skills": [],
+  "tools": []
+}
