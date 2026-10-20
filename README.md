@@ -168,8 +168,7 @@ This bundles Python 3.12, the app and a small launcher, and produces `installer/
 5. Press **Save AI**: Marchand creates a new Ollama model that carries a careful persona, the condensed lessons and a few worked examples.
 
 **Honest limits:** this changes the model's *instructions, lessons and examples*, not its weights. A small local model gets better habits and better
-results on tasks like the ones it practised, but it does not become Opus. Only **GPU fine-tuning** changes weights. For the strongest results, pick
-Claude on your subscription directly. Claude requests count against your plan limits.
+results on tasks like the ones it practised, but it does not become Opus. Only **GPU fine-tuning** changes weights, Follow your teacher provider's terms of use.
 
 ---
 
