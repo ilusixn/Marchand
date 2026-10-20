@@ -23,7 +23,7 @@ Chat, code, make pictures and *train your own local AI* with Claude, Grok or any
 <table>
   <tr>
     <td width="50%"><a href="docs/screenshots/model-picker-library.png"><img src="docs/screenshots/model-picker-library.png" alt="Model picker with the downloadable model library"></a><br><sub><b>One picker for every AI.</b> Switch between your own AIs, Claude, local and cloud models, or open the library of 70+ models with a Download button and a link for each.</sub></td>
-    <td width="50%"><a href="docs/screenshots/training.png"><img src="docs/screenshots/training.png" alt="Training tab"></a><br><sub><b>Train your own AI.</b> Pick a student and a teacher, choose from 46+ tasks in many languages, and save the result as your own model.</sub></td>
+    <td width="50%"><a href="docs/screenshots/training.png"><img src="docs/screenshots/training.png" alt="Training tab"></a><br><sub><b>Train your own AI.</b> Pick a student and a teacher, choose from 46+ tasks in many languages, and save the result as your own model.</sub><br><sub><i>Follow your teacher provider's terms of use.</i></sub></td>
   </tr>
   <tr>
     <td width="50%"><a href="docs/screenshots/models-library.png"><img src="docs/screenshots/models-library.png" alt="Models library with AMD detection"></a><br><sub><b>Knows your PC.</b> Detects your graphics card (AMD Radeon shown) and tells you which models run great, which run slower and which are too big.</sub></td>
@@ -51,7 +51,7 @@ You can:
   change.
 - **Generate pictures** with Forge, Automatic1111, SD.Next, ComfyUI or cloud image models.
 - **Understand images, documents and videos**: drag in screenshots, PDFs, Word/Excel/PowerPoint files, zip archives, whole folders or videos.
-- **Train a small local AI to be better**, with a stronger AI (Claude, Grok, anything) acting as its teacher, then **save the result as your own AI**.
+- **Train a small local AI to be better**, with a stronger AI acting as its teacher, then **save the result as your own AI**, Follow your teacher provider's terms of use.
 - **Learn reverse engineering** in a dedicated school with real, test-verified exercises.
 
 Everything runs on your computer. Your chats, files and trained AIs stay in a folder on your PC (`~/.marchand`).

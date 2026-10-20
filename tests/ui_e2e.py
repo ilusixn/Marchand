@@ -561,6 +561,11 @@ with sync_playwright() as p:
         send("TASK:limit now"); wait_idle(); assert "hit your limit" in pg.inner_text("#list"), pg.inner_text("#list")[-300:]
         pick_model("qwen2.5-coder:14b")
     step("live activity (thinking, status), message queue, Send now, errors shown", t_activity_queue)
+    def t_terms_notice():
+        tab("Training")
+        for sec in ("Train with Claude", "Advanced", "Marchand Coder", "Reverse engineering"):
+            pg.click(".pnav div:has-text('%s')" % sec); pg.wait_for_selector(".tnotice"); assert "Follow your teacher provider's terms of use." in pg.inner_text(".tnotice"), sec
+    step("Training pages show the 'follow your teacher provider's terms of use' notice", t_terms_notice)
     def t_plus_menu():
         tab("Chat"); pg.click("#plusBtn"); pg.wait_for_selector("#plusMenu.on")
         items = pg.eval_on_selector_all("#plusMenu .pi", "e=>e.map(x=>x.dataset.item)"); assert items[:5] == ["files", "folder", "slash", "connectors", "plugins"], items

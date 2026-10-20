@@ -8,6 +8,7 @@ function modelOptions(sel,filter,cur,none){sel.innerHTML=none?'<option value="">
 async function renderTraining(){
   clearInterval(TRS.timer);const root=$('#plug');root.innerHTML='';
   root.appendChild(SEC(root,TSECS,TC.sec,k=>{TC.sec=k;TRS.view=null;renderTraining()}));
+  root.appendChild(el('div','tnotice','&#9888; Follow your teacher provider\'s terms of use.'));
   const b=el('div','pbody');root.appendChild(b);
   const fn={quick:trQuick,train:trTrain,results:trResults,coder:trCoder,mine:trMine,re:trRE,tasks:trTasks,setup:tSetup,lessons:tLessons,examples:tExamples,build:tBuild,gpu:trGpu}[TC.sec];
   await fn(b)}
