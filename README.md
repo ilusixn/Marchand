@@ -5,7 +5,7 @@
 # Marchand Studio
 
 **The all-in-one desktop AI studio for your own PC.**
-Chat, code, make pictures and *train your own local AI* with Claude, Grok or any model you like, all from one window.
+Chat, code, make pictures and *train your own local AI* with any model you like, all from one window, Follow your teacher provider's terms of use.
 
 [![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-ilusixne-2E5090?style=for-the-badge&logo=buymeacoffee&logoColor=white)](https://buymeacoffee.com/ilusixne)
 [![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-2E5090?style=for-the-badge)](LICENSE)
