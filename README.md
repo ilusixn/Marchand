@@ -5,7 +5,7 @@
 # Marchand Studio
 
 **The all-in-one desktop AI studio for your own PC.**
-Chat, code, make pictures and *train your own local AI* with Claude, Grok or any model you like, all from one window.
+Chat, code, make pictures and *train your own local AI* with a stronger AI as its teacher, all from one window.
 
 [![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-ilusixne-2E5090?style=for-the-badge&logo=buymeacoffee&logoColor=white)](https://buymeacoffee.com/ilusixne)
 [![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-2E5090?style=for-the-badge)](LICENSE)
@@ -18,11 +18,15 @@ Chat, code, make pictures and *train your own local AI* with Claude, Grok or any
 
 ---
 
+> **⚠️ Disclaimer: respect your teacher's terms.** Marchand Studio lets a stronger AI teach a smaller local AI. You are responsible for following the
+> terms of use of every AI service you use as a teacher, including any rules about using its outputs to train or improve other models. Marchand Studio
+> is not affiliated with, endorsed by or sponsored by any AI provider; all product names belong to their owners.
+
 ## Screenshots
 
 <table>
   <tr>
-    <td width="50%"><a href="docs/screenshots/model-picker-library.png"><img src="docs/screenshots/model-picker-library.png" alt="Model picker with the downloadable model library"></a><br><sub><b>One picker for every AI.</b> Switch between your own AIs, Claude, local and cloud models, or open the library of 70+ models with a Download button and a link for each.</sub></td>
+    <td width="50%"><a href="docs/screenshots/model-picker-library.png"><img src="docs/screenshots/model-picker-library.png" alt="Model picker with the downloadable model library"></a><br><sub><b>One picker for every AI.</b> Switch between your own AIs, local and cloud models, or open the library of 70+ models with a Download button and a link for each.</sub></td>
     <td width="50%"><a href="docs/screenshots/training.png"><img src="docs/screenshots/training.png" alt="Training tab"></a><br><sub><b>Train your own AI.</b> Pick a student and a teacher, choose from 46+ tasks in many languages, and save the result as your own model.</sub><br><sub><i>Follow your teacher provider's terms of use.</i></sub></td>
   </tr>
   <tr>
@@ -30,7 +34,7 @@ Chat, code, make pictures and *train your own local AI* with Claude, Grok or any
     <td width="50%"><a href="docs/screenshots/images-tab.png"><img src="docs/screenshots/images-tab.png" alt="Images tab"></a><br><sub><b>Pictures.</b> Forge, Automatic1111, SD.Next, ComfyUI or cloud models from the same window, with download links when a tool is missing.</sub></td>
   </tr>
   <tr>
-    <td colspan="2"><a href="docs/screenshots/help.png"><img src="docs/screenshots/help.png" alt="Built-in Help"></a><br><sub><b>Built-in guides.</b> Every feature is explained inside the app: models, training, Claude, pictures, plugins and settings.</sub></td>
+    <td colspan="2"><a href="docs/screenshots/help.png"><img src="docs/screenshots/help.png" alt="Built-in Help"></a><br><sub><b>Built-in guides.</b> Every feature is explained inside the app: models, training, pictures, plugins and settings.</sub></td>
   </tr>
 </table>
 
@@ -43,10 +47,9 @@ have: a built-in **school for your own local AI**.
 
 You can:
 
-- **Talk** to local models (Ollama, LM Studio, Jan, KoboldCpp, llama.cpp, vLLM and more) and to cloud models (Claude, ChatGPT, Grok, Gemini, DeepSeek,
-  Mistral, Groq, OpenRouter and many others) from the same chat box.
-- **Use your Claude subscription directly**: Opus, Sonnet, Fable and Haiku with a Low to Max effort selector and live plan-usage meters, through the
-  Claude Code program you already have. No API key needed.
+- **Talk** to local models (Ollama, LM Studio, Jan, KoboldCpp, llama.cpp, vLLM and more) and to cloud AI services (bring your own key) from the same chat box.
+- **Use your AI subscription directly**: pick a model with a Low to Max effort selector and see live plan-usage meters, through the provider's own
+  command-line program you already have. No API key needed.
 - **Code with an agent** that reads your project, plans, edits files with visible diffs, runs your tests, reviews its own work, and asks before every
   change.
 - **Generate pictures** with Forge, Automatic1111, SD.Next, ComfyUI or cloud image models.
@@ -61,18 +64,18 @@ Everything runs on your computer. Your chats, files and trained AIs stay in a fo
 ## Highlights
 
 ### One chat for every AI
-- A model picker under the message box, like Claude Desktop: **All / My AI / Claude / Local / Cloud**.
+- A model picker under the message box, like the desktop AI apps: **All / My AI / subscription / Local / Cloud**.
 - Shows 6 models, then **Show more models**: a library of 70+ downloadable local models with size, a "runs great / runs slower / too big for this
   PC" label, a Download button and a link to its page on ollama.com, plus links to every Ollama and Hugging Face model.
-- **Popular AIs** (ChatGPT, Grok, Gemini, Claude API, DeepSeek, Mistral, Groq, OpenRouter) listed right in the picker: paste a key, press Connect, done.
+- **Popular cloud AIs** listed right in the picker: paste a key, press Connect, done.
 - Any AI you add, from a key or a local program, is **toggleable in the chat automatically**.
 - Every AI you train and save appears under **My AI** automatically.
 
-### Claude on your subscription
-- Picks up the Claude Code program automatically (normal install folders, Claude Desktop's bundled copy, the VS Code extension) or via a
-  **Search this PC for AI agents** button that also looks for Codex CLI, Gemini CLI, Aider, Goose and opencode.
+### Your AI subscription
+- Finds your provider's command-line program automatically (normal install folders, the desktop app's bundled copy, the VS Code extension) or via a
+  **Search this PC for AI agents** button that also looks for other coding-agent programs.
 - **Effort selector** from Low to Max, a context meter and **plan usage meters** (5-hour session, weekly limit, extra-usage status) in the side panel.
-- Edits and commands from Claude appear as the same **approval cards** as every other model.
+- Edits and commands from the AI appear as the same **approval cards** as every other model.
 
 ### Always see what the AI is doing
 - A grey **Thinking** box streams the model's reasoning live, and a status pill shows the current step ("Reading file...", "Running...", "Writing the answer...") with a timer.
@@ -89,7 +92,7 @@ Everything runs on your computer. Your chats, files and trained AIs stay in a fo
 ### Make your own AI (Training)
 The Training tab is the heart of the app.
 
-- **Train with Claude**: choose your local AI (the *student*) and a *teacher* (Claude on your subscription, Grok, or any model with a key) and press
+- **Train with stronger AI**: choose your local AI (the *student*) and a *teacher* (a stronger AI on your subscription or with your own key) and press
   **Start teaching**. Your AI attempts real coding tasks in a sandbox folder, the **tests decide pass or fail**, and the teacher reviews every failure,
   writes lessons and shows a worked solution. Press **Save AI** at the end to get a new model with those lessons and examples built in.
 - Every teacher is briefed that it is teaching a smaller AI and how to teach it well.
@@ -98,7 +101,7 @@ The Training tab is the heart of the app.
 - **Marchand Coder**: a ready-made local coding AI built from the best Ollama coder your PC runs well, with 90 expert rules across 15 languages,
   verified worked examples and a careful engineering persona.
 - **Marchand Reverser**: the same idea for reverse engineering only.
-- **Add your own model**: download from Ollama or Hugging Face, import a `.gguf` file, or connect any program that offers an OpenAI-style address.
+- **Add your own model**: download from Ollama or Hugging Face, import a `.gguf` file, or connect any program that offers a compatible chat address.
 - **Your own tasks**: turn any of your projects into a training task with your own test command.
 - **GPU fine-tuning** (NVIDIA): real LoRA fine-tuning with Unsloth, exported to GGUF and imported into Ollama automatically.
 
@@ -115,7 +118,7 @@ role, then re-implement and compare. Educational and defensive use only: your ow
 
 ### Plugins and connectors
 - **Plugins**: slash commands, skills, tools and rules you can switch on or off.
-- **Connectors (MCP)**: add MCP servers, test them and toggle them from the **+ menu**; link with Claude Desktop's connectors.
+- **Connectors (MCP)**: add MCP servers, test them and toggle them from the **+ menu**; link with your desktop AI app's connectors.
 
 ### AMD, NVIDIA, Apple and CPU
 - Detects **AMD Radeon** cards. Ollama uses ROCm on supported cards or its experimental Vulkan mode; LM Studio and KoboldCpp run on AMD through Vulkan.
@@ -140,7 +143,7 @@ Windows SmartScreen may warn about an unsigned installer: choose **More info**, 
 
 Optional but recommended:
 - **Ollama** (ollama.com) for local models.
-- **Claude Code** (claude.ai/code): install it, run `claude` once in a terminal and log in. Claude Desktop alone is not enough.
+- **Your AI provider's command-line program** (optional): install it, run it once in a terminal and log in. The provider's desktop app alone is not enough.
 - **ffmpeg** (`winget install ffmpeg`) so AIs can analyse videos.
 
 ### From source (Windows, macOS, Linux)
@@ -169,8 +172,8 @@ This bundles Python 3.12, the app and a small launcher, and produces `installer/
 5. Press **Save AI**: Marchand creates a new Ollama model that carries a careful persona, the condensed lessons and a few worked examples.
 
 **Honest limits:** this changes the model's *instructions, lessons and examples*, not its weights. A small local model gets better habits and better
-results on tasks like the ones it practised, but it does not become Opus. Only **GPU fine-tuning** changes weights. For the strongest results, pick
-Claude on your subscription directly. Claude requests count against your plan limits.
+results on tasks like the ones it practised, but it does not become a top cloud AI. Only **GPU fine-tuning** changes weights. For the strongest results, pick
+the stronger AI directly. Its requests count against your plan limits.
 
 ---
 
@@ -185,7 +188,7 @@ Claude on your subscription directly. Claude requests count against your plan li
 
 ## Tests
 
-`tests/run_all.sh` starts fake servers (Ollama, OpenAI-style, Anthropic-style, a fake Claude Code program that speaks the real stream-json and
+`tests/run_all.sh` starts fake servers (Ollama, two cloud-style APIs, a fake coding-agent program that speaks the real stream-json and
 permission protocol, Forge, ComfyUI, LM Studio, an MCP server, a fake GPU trainer) and runs the API suites plus a browser run through every page.
 It also verifies every training task fails before and passes after its reference solution.
 
@@ -201,7 +204,7 @@ SmartScreen), the Ollama updater and real GPU fine-tuning.
 | `app.py`, `tray.py`, `winquiet.py` | Desktop shell: window, tray icon, hidden child consoles |
 | `server.py` | Local web server and all API endpoints |
 | `engine.py` | The coding agent loop and its tools |
-| `claude_code.py`, `agents.py` | Claude Code bridge and the AI-agent finder |
+| `claude_code.py`, `agents.py` | Coding-agent bridge and the AI-agent finder |
 | `trainer.py`, `teacher.py`, `pack.py`, `curriculum*.py` | Training loop, teacher briefing, expert rules, 71 verified tasks |
 | `ollama_mgr.py`, `providers.py`, `software.py` | Model catalog, hardware detection, providers, app links |
 | `images.py`, `finetune.py`, `extract.py`, `plugins.py` | Pictures, GPU fine-tuning, document text, plugins and MCP |
@@ -231,6 +234,16 @@ Marchand Studio (see [`TRADEMARK.md`](TRADEMARK.md)).
 Copyright (c) 2026 ilusixne. The bundled Python in the Windows installer is licensed under the Python Software Foundation License (included with it).
 
 > This is not legal advice. The license is the official, unmodified PolyForm Noncommercial 1.0.0 text.
+
+---
+
+## Disclaimer
+
+Marchand Studio is a tool. You decide which AI services to connect and which AI acts as your teacher, and you are responsible for following their terms
+of use and for the content you create. In particular, **respect your teacher's terms of service**: check what each provider allows before using its answers to
+train, improve or evaluate another model. Marchand Studio is not affiliated with, endorsed by or sponsored by any AI provider, model maker or software
+mentioned or used by the app. All product names and trademarks belong to their respective owners. The software is provided "as is" without warranty (see
+[`LICENSE`](LICENSE)).
 
 ---
 

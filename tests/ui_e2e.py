@@ -350,17 +350,17 @@ with sync_playwright() as p:
         send("what happens in this video?"); wait_idle(); assert "clip.mp4" in pg.inner_text("#list")
     step("video attachment becomes 6 frames + info and is sent", t_video)
     def t_quick_train():
-        tab("Training"); pg.click(".pnav div:has-text('Train with Claude')"); pg.wait_for_selector("#qGo", timeout=10000)
-        assert "Train your AI with Claude" in pg.inner_text(".hero"); pg.select_option("#qStu", "qwen2.5-coder:14b"); assert pg.input_value("#qTea") == "claude-code::opus"
+        tab("Training"); pg.click(".pnav div:has-text('Train with stronger AI')"); pg.wait_for_selector("#qGo", timeout=10000)
+        assert "Train your AI with a stronger AI" in pg.inner_text(".hero"); pg.select_option("#qStu", "qwen2.5-coder:14b"); assert pg.input_value("#qTea") == "claude-code::opus"
         pg.select_option("#qEff", "high"); pg.click("#qGo"); pg.wait_for_selector(".trbars", timeout=15000)
         pg.wait_for_selector("#trSaveBtn", timeout=240000)
         rep_ = pg.inner_text(".pbody"); assert "Round 1" in rep_ and "Round 2" in rep_ and "teacher calls" in rep_, rep_[:400]
         pg.fill("#trSaveName", "claude-taught"); pg.click("#trSaveBtn"); pg.wait_for_function("document.querySelector('.pbody').innerText.includes('Saved as')", timeout=30000)
         names = [a["name"] for a in api("/api/ais")]; assert "claude-taught" in names, names
         pg.click("button:has-text('Use it now')"); pg.wait_for_timeout(1500); m = pg.evaluate("ST.model"); assert m == "claude-taught", m
-    step("Train with Claude: one button, live progress, Save AI, use it", t_quick_train)
+    step("Train with stronger AI: one button, live progress, Save AI, use it", t_quick_train)
     def t_languages_ui():
-        tab("Training"); pg.click(".pnav div:has-text('Train with Claude')"); pg.wait_for_selector("#qLen")
+        tab("Training"); pg.click(".pnav div:has-text('Train with stronger AI')"); pg.wait_for_selector("#qLen")
         opts = pg.eval_on_selector_all("#qLen option", "e=>e.map(x=>x.textContent)"); assert any("Every language" in o for o in opts) and any("Reverse engineering" in o for o in opts) and any("Pick languages" in o for o in opts), opts
         pg.select_option("#qLen", "pick"); pg.wait_for_selector(".langchips")
         chips = pg.eval_on_selector_all(".lchip", "e=>e.map(x=>x.textContent.trim())"); assert len(chips) == 16, chips
@@ -372,7 +372,7 @@ with sync_playwright() as p:
         cnt = pg.inner_text("#trCount"); assert "selected" in cnt, cnt
     step("language picker: 16 groups (15 languages + reverse engineering), per-language select in Advanced", t_languages_ui)
     def t_multilang_train_ui():
-        tab("Training"); pg.click(".pnav div:has-text('Train with Claude')"); pg.wait_for_selector("#qLen")
+        tab("Training"); pg.click(".pnav div:has-text('Train with stronger AI')"); pg.wait_for_selector("#qLen")
         pg.select_option("#qStu", "qwen2.5-coder:14b"); pg.select_option("#qLen", "re"); pg.click("#qGo"); pg.wait_for_selector(".trbars", timeout=15000)
         pg.wait_for_selector("#trSaveBtn", timeout=300000); txt = pg.inner_text(".pbody")
         assert "unknown save-file format" in txt.lower() and "disassembler" in txt.lower() and "Pass rate" in txt, txt[:300]
@@ -563,7 +563,7 @@ with sync_playwright() as p:
     step("live activity (thinking, status), message queue, Send now, errors shown", t_activity_queue)
     def t_terms_notice():
         tab("Training")
-        for sec in ("Train with Claude", "Advanced", "Marchand Coder", "Reverse engineering"):
+        for sec in ("Train with stronger AI", "Advanced", "Marchand Coder", "Reverse engineering"):
             pg.click(".pnav div:has-text('%s')" % sec); pg.wait_for_selector(".tnotice"); assert "Follow your teacher provider's terms of use." in pg.inner_text(".tnotice"), sec
     step("Training pages show the 'follow your teacher provider's terms of use' notice", t_terms_notice)
     def t_about_build():

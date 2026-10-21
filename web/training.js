@@ -3,7 +3,7 @@ TC.sec='quick';
 const LOCALP=['lmstudio','jan','koboldcpp','textgen','llamacpp','vllm','gpt4all','localai'];
 const TRS={live:null,timer:null,view:null,sel:null,form:null};
 renderTeach=renderTraining;
-const TSECS=[['quick','Train with Claude'],['train','Advanced'],['results','Results'],['coder','Marchand Coder'],['mine','Add your model'],['re','Reverse engineering'],['tasks','Your tasks'],['setup','Teacher'],['lessons','Lessons'],['examples','Examples'],['build','My AIs'],['gpu','GPU']];
+const TSECS=[['quick','Train with stronger AI'],['train','Advanced'],['results','Results'],['coder','Marchand Coder'],['mine','Add your model'],['re','Reverse engineering'],['tasks','Your tasks'],['setup','Teacher'],['lessons','Lessons'],['examples','Examples'],['build','My AIs'],['gpu','GPU']];
 function modelOptions(sel,filter,cur,none){sel.innerHTML=none?'<option value="">'+esc(none)+'</option>':'';(ST.groups||[]).filter(g=>filter(g.provider)).forEach(g=>{if(!g.models.length)return;const og=el('optgroup');og.label=g.label;g.models.forEach(m=>{const o=el('option',null,esc(m.name));o.value=m.id;og.appendChild(o)});sel.appendChild(og)});if(cur!=null)sel.value=cur}
 async function renderTraining(){
   clearInterval(TRS.timer);const root=$('#plug');root.innerHTML='';
@@ -22,7 +22,7 @@ async function trQuick(b){
   if(TRS.view||live)return trLive(b,TRS.view||live.id);
   const cloud=(ST.groups||[]).filter(g=>g.provider!=='ollama'&&!LOCALP.includes(g.provider));const cc=cloud.find(g=>g.provider==='claude-code');const local=(ST.groups||[]).find(g=>g.provider==='ollama');
   const s=await api('/api/settings');
-  b.appendChild(el('div','hero','<h2>Train your AI with Claude</h2><p>Claude works through '+'real coding tasks with your local AI: your AI tries each one, the tests decide pass or fail, and Claude explains every mistake, writes the lessons and shows the right solution. Then your AI is tested again so you see the improvement. Press <b>Save AI</b> at the end to keep the result.</p>'));
+  b.appendChild(el('div','hero','<h2>Train your AI with a stronger AI</h2><p>The stronger AI works through '+'real coding tasks with your local AI: your AI tries each one, the tests decide pass or fail, and the stronger AI explains every mistake, writes the lessons and shows the right solution. Then your AI is tested again so you see the improvement. Press <b>Save AI</b> at the end to keep the result.</p>'));
   if(!(ST.groups||[]).some(g=>g.provider!=='claude-code'&&g.models.length)){b.appendChild(el('div','err','You have no local model yet. Add one in the "Add your model" tab, or install Marchand Coder.'));return}
   if(!cloud.length){b.appendChild(el('div','err','No teacher available. Install Claude Code and log in to use your Claude subscription, or add a key in Models &gt; Cloud and local servers.'));return}
   const f=el('div','pform quick','<div class="trgrid"><div><label>Your AI (the student)</label><select id="qStu"></select></div><div><label>Teacher</label><select id="qTea"></select></div></div>'+
