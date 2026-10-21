@@ -17,6 +17,13 @@ function pickTasks(mode,allT,sel,quick){const av=allT.filter(t=>t.builtin&&t.ava
   if(mode==='quick')return quick;if(mode==='full')return av.map(t=>t.id);if(mode==='re')return av.filter(t=>t.lang==='reverse').map(t=>t.id);
   if(mode==='langs'){const seen={};return av.filter(t=>t.lang!=='reverse'&&!seen[t.lang]&&(seen[t.lang]=1)).map(t=>t.id)}
   return av.filter(t=>sel.has(t.lang)).map(t=>t.id)}
+function addAiPanel(parent,onDone,autoSearch){
+  parent.appendChild(el('div','psec','Add your AI: pick a service, paste your key, press Connect'));
+  const list=el('div','mpop-inline');parent.appendChild(list);MP.type='all';popRows(list,null,onDone);
+  if(!list.firstChild)list.appendChild(el('div','note','All the popular services are already connected.'));
+  const more=el('button','btn sm','More services and local servers...');more.onclick=()=>{MD.sec='cloud';showView('models')};parent.appendChild(more);
+  parent.appendChild(el('div','psec','Have a subscription instead of a key?'));
+  agentSearch(parent,onDone,autoSearch)}
 function teacherCard(b,cloud){
   const card=el('div','pcard tcard');card.dataset.teachers='1';const sub=cloud.find(g=>g.provider==='claude-code');const keyed=cloud.filter(g=>g.provider!=='claude-code'&&g.models.length);
   card.appendChild(el('h4',null,'1. Your stronger AI (the teacher)'));
@@ -25,12 +32,7 @@ function teacherCard(b,cloud){
   keyed.forEach(g=>st.appendChild(el('div',null,'<span style="color:var(--ok)">&#10004;</span> <b>'+esc(g.label)+'</b> is connected ('+g.models.length+' models).')));
   if(!sub&&!keyed.length)st.appendChild(el('div','note','No stronger AI is connected yet. Add one below, or let Marchand look for your subscription.'));
   card.appendChild(st);
-  card.appendChild(el('div','psec','Add your AI: pick a service, paste your key, press Connect'));
-  const list=el('div','mpop-inline');card.appendChild(list);MP.type='all';popRows(list,null,()=>renderTraining());
-  if(!list.firstChild)list.appendChild(el('div','note','All the popular services are already connected.'));
-  const more=el('button','btn sm','More services and local servers...');more.onclick=()=>{MD.sec='cloud';showView('models')};card.appendChild(more);
-  card.appendChild(el('div','psec','Have a subscription instead of a key?'));
-  agentSearch(card,()=>renderTraining(),!sub&&!keyed.length);
+  addAiPanel(card,()=>renderTraining(),!sub&&!keyed.length);
   b.appendChild(card)}
 async function trQuick(b){
   await loadModels();const live=(await api('/api/training/sessions')).find(s=>s.status==='running');
@@ -197,10 +199,16 @@ async function trRE(b){
   b.appendChild(el('div','pcard','<h4>The method</h4><ol><li><b>Observe</b>: magic bytes, lengths, strings, what changes when one input changes.</li><li><b>Hypothesise</b>: write the guess down, then test it on <i>every</i> sample.</li><li><b>Peel layers</b>: hex, base64, zlib, XOR, one at a time.</li><li><b>Read by role</b>: find the loop, the exit condition, the shifts and masks in assembly.</li><li><b>Re-implement and compare</b>: a clean version must match the original on many inputs.</li></ol>'));
   b.appendChild(el('div','psec',re.length+' practice tasks with real tests'));
   const g=el('div','grid');re.forEach(t=>{const c=el('div','pcard');c.dataset.re=t.id;c.appendChild(el('h4',null,esc(t.title)));c.appendChild(el('p',null,esc((t.prompt||'').slice(0,220))+((t.prompt||'').length>220?'...':'')));c.appendChild(el('div','meta',t.available?'Ready':'Needs: '+esc(t.why||'a tool that is missing')));g.appendChild(c)});b.appendChild(g);
-  const f=el('div','pform');f.innerHTML='<h4>Train an AI on reverse engineering</h4><div class="trgrid"><div><label>Your AI (the student)</label><select id="reStu"></select></div><div><label>Teacher</label><select id="reTea"></select></div></div><div class="prow"><button class="btn pri big" id="reGo">Start reverse-engineering training</button><span class="err" id="reErr"></span></div><div class="meta">2 rounds. The teacher reviews every failed task, explains the method and shows a worked solution. Results appear in Results.</div>';b.appendChild(f);
+  const f=el('div','pform');f.innerHTML='<h4>Train an AI on reverse engineering</h4><div class="trgrid"><div><label>Your AI (the student)</label><select id="reStu"></select></div><div><label>Teacher</label><select id="reTea"></select><div class="prow" style="margin-top:6px"><button class="btn sm" id="reAdd">+ Add AI or subscription AI</button></div></div></div><div id="reAddBox" class="pcard" style="display:none;margin-top:8px"></div><div class="prow"><button class="btn pri big" id="reGo">Start reverse-engineering training</button><span class="err" id="reErr"></span></div><div class="meta">2 rounds. The teacher reviews every failed task, explains the method and shows a worked solution. Results appear in Results.</div>';b.appendChild(f);
   const s=await api('/api/settings');const cloud=(ST.groups||[]).filter(x=>x.provider!=='ollama'&&!LOCALP.includes(x.provider));
   modelOptions(f.querySelector('#reStu'),p=>p!=='claude-code',ST.model&&!ST.model.startsWith('claude-code::')?ST.model:'');
   modelOptions(f.querySelector('#reTea'),p=>p!=='ollama'&&!LOCALP.includes(p),(s.teacher_model||(cloud[0]&&cloud[0].models[0]&&cloud[0].models[0].id)||''),'(no teacher: just measure)');
+  const teaFilter=p=>p!=='ollama'&&!LOCALP.includes(p);
+  const rebuildTeachers=async(pick)=>{const keep=pick||f.querySelector('#reTea').value;await loadModels(true);modelOptions(f.querySelector('#reTea'),teaFilter,keep,'(no teacher: just measure)');
+    if(pick&&f.querySelector('#reTea').value!==pick){const sub=(ST.groups||[]).find(g=>g.provider==='claude-code');if(sub&&sub.models.length)f.querySelector('#reTea').value=sub.models[0].id}
+    const box=f.querySelector('#reAddBox');box.innerHTML='';addAiPanel(box,onAdded,false)};
+  const onAdded=async x=>{const pick=x&&x.models&&x.models.length?x.models[0].id:(x&&x.id==='claude'?'claude-code::opus':'');await rebuildTeachers(pick)};
+  f.querySelector('#reAdd').onclick=()=>{const box=f.querySelector('#reAddBox');if(!box.firstChild)addAiPanel(box,onAdded,false);box.style.display=box.style.display==='none'?'':'none'};
   f.querySelector('#reGo').onclick=async()=>{const tid=f.querySelector('#reTea').value;if(tid)await api('/api/settings',{teacher_model:tid});
     const r=await api('/api/training/start',{name:'Reverse engineering',student:f.querySelector('#reStu').value,teacher:tid,demos:tid?'teacher':'reference',rounds:tid?2:1,max_steps:25,learn:!!tid,keep_successes:true,persona:true,consolidate:!!tid,tasks:re.filter(t=>t.available).map(t=>t.id)});
     if(r.error){f.querySelector('#reErr').textContent=r.error;return}TC.sec='quick';TRS.view=r.id;renderTraining()};

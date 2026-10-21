@@ -389,4 +389,9 @@ for teacher_id in ("anthropic::claude-test", "custom::mock-model", "claude-code:
     ok("training with teacher %s finished and the teacher was used" % teacher_id, s["status"] == "finished" and s["counters"]["student_runs"] >= 1, [s["status"], s.get("log", [])[-3:]])
 
 ok("settings report the app build so a stale copy can be recognised", J("/api/settings").get("app_build") not in (None, ""), J("/api/settings").get("app_build"))
+
+eh = os.path.join(HERE, "work", "emptyhome"); os.makedirs(eh, exist_ok=True)
+ne = subprocess.run([sys.executable, "-c", "import claude_code as c;print(c.exe())"], capture_output=True, text=True,
+                    env=dict(os.environ, HOME=eh, USERPROFILE=eh, PATH="/nonexistent", MARCHAND_CLAUDE="", MARCHAND_HOME=eh + "/m", PYTHONPATH=os.path.dirname(HERE)), cwd=os.path.dirname(HERE)).stdout.strip()
+ok("without a subscription program on the PC no subscription models are offered", ne == "None", ne)
 print("ALL OK (%d checks)" % n[0])

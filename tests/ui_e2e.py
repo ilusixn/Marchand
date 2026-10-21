@@ -577,6 +577,14 @@ with sync_playwright() as p:
         assert pg.query_selector("[data-teachers] [data-agents]") and "More services" in pg.inner_text("[data-teachers]")
         assert "Claude" not in pg.inner_text(".hero") and "Claude" not in pg.inner_text(".quick .meta")
     step("Train with stronger AI: teacher card with connected AIs, add-your-AI list with key links, subscription search", t_teacher_card)
+    def t_re_add_ai():
+        tab("Training"); pg.click(".pnav div:has-text('Reverse engineering')"); pg.wait_for_selector("#reAdd")
+        opts = pg.eval_on_selector_all("#reTea option", "e=>e.map(x=>x.value)"); assert opts[0] == "" and any(o.startswith("claude-code::") for o in opts), opts
+        assert "(no teacher: just measure)" in pg.inner_text("#reTea") and pg.is_visible("#reAdd") and "Add AI or subscription AI" in pg.inner_text("#reAdd")
+        assert not pg.is_visible("#reAddBox"); pg.click("#reAdd"); pg.wait_for_selector("#reAddBox [data-pop=xai]"); assert pg.query_selector("#reAddBox [data-agents]")
+        pg.click("#reAddBox [data-pop=xai]"); pg.wait_for_selector("#reAddBox [data-pop=xai] + .popf input"); pg.click("#reAddBox [data-pop=xai] + .popf button"); assert "Paste your key" in pg.inner_text("#reAddBox")
+        pg.click("#reAdd"); assert not pg.is_visible("#reAddBox")
+    step("Reverse engineering: Add AI / subscription AI button under the teacher list; connected subscription models listed", t_re_add_ai)
     def t_plus_menu():
         tab("Chat"); pg.click("#plusBtn"); pg.wait_for_selector("#plusMenu.on")
         items = pg.eval_on_selector_all("#plusMenu .pi", "e=>e.map(x=>x.dataset.item)"); assert items[:5] == ["files", "folder", "slash", "connectors", "plugins"], items
