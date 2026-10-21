@@ -15,7 +15,6 @@ LINKS = [
     {"id": "textgen", "name": "text-generation-webui", "what": "Feature-rich model web UI", "url": "https://github.com/oobabooga/text-generation-webui"},
     {"id": "llamacpp", "name": "llama.cpp", "what": "The engine behind many local runners", "url": "https://github.com/ggml-org/llama.cpp"},
     {"id": "gpt4all", "name": "GPT4All", "what": "Desktop local chat app", "url": "https://www.nomic.ai/gpt4all"},
-    {"id": "strata", "name": "Strata", "what": "Runs very large models (a 125B model) on a gaming PC; free, MIT license", "url": "https://github.com/Niko1221/Strata/releases/latest"},
     {"id": "localai", "name": "LocalAI", "what": "OpenAI-compatible local server", "url": "https://localai.io"},
     {"id": "forge", "name": "Stable Diffusion WebUI Forge", "what": "Make pictures (fast, low memory)", "url": "https://github.com/lllyasviel/stable-diffusion-webui-forge",
      "amd": "https://github.com/lshqqytiger/stable-diffusion-webui-amdgpu-forge", "amd_note": "AMD build (DirectML / ZLUDA)"},

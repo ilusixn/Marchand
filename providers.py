@@ -31,7 +31,6 @@ LOCAL_SERVERS = {
     "vllm": ("vLLM", "http://127.0.0.1:8000/v1"),
     "gpt4all": ("GPT4All", "http://127.0.0.1:4891/v1"),
     "localai": ("LocalAI", "http://127.0.0.1:8081/v1"),
-    "strata": ("Strata", "http://127.0.0.1:8080/v1"),
 }
 OPENAI_COMPAT.update(LOCAL_SERVERS)
 LABELS = {"ollama": "Local (Ollama)", "anthropic": "Claude API (Anthropic key)", "claude-code": "Claude (your subscription)"}

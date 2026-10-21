@@ -1,6 +1,6 @@
 PAGES.training=renderTraining;
 TC.sec='quick';
-const LOCALP=['lmstudio','jan','koboldcpp','textgen','llamacpp','vllm','gpt4all','localai','strata'];
+const LOCALP=['lmstudio','jan','koboldcpp','textgen','llamacpp','vllm','gpt4all','localai'];
 const TRS={live:null,timer:null,view:null,sel:null,form:null};
 renderTeach=renderTraining;
 const TSECS=[['quick','Train with stronger AI'],['train','Advanced'],['results','Results'],['coder','Marchand Coder'],['mine','Add your model'],['re','Reverse engineering'],['tasks','Your tasks'],['setup','Teacher'],['lessons','Lessons'],['examples','Examples'],['build','My AIs'],['gpu','GPU']];

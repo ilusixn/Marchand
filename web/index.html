@@ -453,7 +453,7 @@ function drawMore(rest){rest.innerHTML='';const q=MP.q.toLowerCase();const list=
   const have=new Set(((ST.groups||[]).find(x=>x.provider==='ollama')||{models:[]}).models.map(m=>m.id));
   rest.appendChild(el('hr'));popRows(rest);
   if(MP.type==='claude'||MP.type==='cloud'){rest.appendChild(el('hr'));const s=el('div','pi','<span>Add cloud accounts and API keys in Settings</span>');s.onclick=()=>{closeMP();$('#setBtn').click()};rest.appendChild(s);return}
-  const cat=(MP.cat&&MP.cat.models||[]).filter(m=>!m.engine&&!have.has(m.name)&&(!q||m.name.includes(q)||m.tags.join(' ').includes(q)||(m.desc||'').toLowerCase().includes(q)));
+  const cat=(MP.cat&&MP.cat.models||[]).filter(m=>!have.has(m.name)&&(!q||m.name.includes(q)||m.tags.join(' ').includes(q)||(m.desc||'').toLowerCase().includes(q)));
   rest.appendChild(el('hr'));rest.appendChild(el('div','pnote','Download to this PC ('+cat.length+' models). Your PC: '+(MP.cat&&MP.cat.hardware?esc(MP.cat.hardware.gpu||'no dedicated GPU'):'')));
   cat.slice(0,40).forEach(m=>{const fc={great:'fitg','too big':'fitb'}[m.fit]||'';const d=el('div','pi','<span style="flex:1"><b>'+esc(m.name)+'</b><small>'+esc(m.desc)+'</small><small class="'+fc+'">~'+m.gb+' GB · '+({great:'runs great',ok:'runs slower','too big':'too big for this PC',unknown:''}[m.fit])+(m.tools?' · can edit files':'')+'</small></span>');
     d.dataset.dl=m.name;const bar=el('div','bar','<i></i>');const msg=el('small');const ln=linkEl(m.url,'page');const bt=el('button','btn sm pri','Download');

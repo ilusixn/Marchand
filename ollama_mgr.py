@@ -211,10 +211,8 @@ def fit(gb, hw):
 
 
 def catalog():
-    import strata
     hw = hardware_cached()
-    models = [dict(m, fit=fit(m["gb"], hw), url="https://ollama.com/library/" + m["name"].split(":")[0]) for m in CATALOG] + strata.entries(hw)
-    return {"hardware": hw, "models": models, "strata": strata.status(),
+    return {"hardware": hw, "models": [dict(m, fit=fit(m["gb"], hw), url="https://ollama.com/library/" + m["name"].split(":")[0]) for m in CATALOG],
             "library": "https://ollama.com/search", "gguf": "https://huggingface.co/models?library=gguf&sort=trending"}
 
 

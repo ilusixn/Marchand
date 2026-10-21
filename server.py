@@ -34,7 +34,6 @@ import ollama_mgr
 import plugins
 import providers
 import software
-import strata
 import teacher
 import trainer
 
@@ -431,17 +430,6 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_json(self.admin(p, data))
             except Exception as ex:
                 self.send_json({"error": str(ex)}, 400)
-        elif p == "/api/strata/install":
-            self.sse_start()
-            try:
-                strata.install(str(data.get("model", "")), lambda ev: self.sse(ev))
-                prov = dict(load_settings().get("providers") or {})
-                prov["strata"] = dict(prov.get("strata") or {}, enabled=True)
-                save_settings({"providers": prov})
-                MODEL_CACHE.clear()
-                self.sse({"done": True, "status": "Strata is serving the model. It is now in the model picker under Local."})
-            except Exception as ex:
-                self.sse({"error": providers.err_text(ex)})
         elif p == "/api/pull":
             self.pull_stream(data)
         elif p == "/api/ollama/update":
