@@ -35,11 +35,28 @@ async function mLibrary(b){
   b.appendChild(el('div','note','Your PC: '+(hw.ram_gb?hw.ram_gb+' GB RAM':'RAM unknown')+(hw.gpu?' - '+esc(hw.gpu)+' ('+hw.vram_gb+' GB video memory)':' - no supported graphics card detected (models run on the CPU, slower)')+'. Sizes are approximate downloads.'));
   if(hw.backend)b.appendChild(el('div','note','<b>Graphics:</b> '+esc(hw.backend)));
   const br=el('div','prow');br.appendChild(linkEl(cat.library||'https://ollama.com/search','Browse every model on ollama.com'));br.appendChild(linkEl(cat.gguf||'https://huggingface.co/models?library=gguf','Hugging Face GGUF models'));br.appendChild(linkEl('https://docs.ollama.com/gpu','Which GPUs Ollama supports'));b.appendChild(br);
-  const bar=el('div','prow');['all','coding','general','vision','small'].forEach(f=>{const p=el('span','pill',f);if(MD.filter===f){p.style.background='var(--accent)';p.style.color='#fff'};p.onclick=()=>{MD.filter=f;renderModels()};bar.appendChild(p)});
+  const bar=el('div','prow');['all','coding','general','vision','small','strata'].forEach(f=>{const p=el('span','pill',f==='strata'?'strata (big models)':f);p.dataset.filter=f;if(MD.filter===f){p.style.background='var(--accent)';p.style.color='#fff'};p.onclick=()=>{MD.filter=f;renderModels()};bar.appendChild(p)});
   const s=el('input');s.placeholder='Search...';s.value=MD.q;s.oninput=()=>{MD.q=s.value;draw()};s.style.maxWidth='220px';bar.appendChild(s);b.appendChild(bar);
+  if(MD.filter==='strata'||MD.filter==='all'){const si=el('div','pcard');si.dataset.strataInfo='1';
+    si.appendChild(el('h4',null,'Strata: very large models on a gaming PC'));
+    si.appendChild(el('p',null,'Strata is a free program (MIT license, by Niko1221) that runs a 125-billion-parameter model on a normal PC and serves it to Marchand. '+(cat.strata&&cat.strata.installed?'<b style="color:var(--ok)">Strata is installed.</b> Press Download on a Strata model below: Strata downloads it, starts it and Marchand connects to it automatically (it appears in the model picker under Local).':'The Strata models below need the Strata program first. Install it, then press Download here.')));
+    const sr=el('div','prow');if(!(cat.strata&&cat.strata.installed)){const gs=linkEl((cat.strata&&cat.strata.releases)||'https://github.com/Niko1221/Strata/releases/latest','Get Strata');gs.className='btn sm pri';gs.dataset.link='strata';sr.appendChild(gs)}
+    sr.appendChild(linkEl((cat.strata&&cat.strata.home)||'https://github.com/Niko1221/Strata','Strata on GitHub'));si.appendChild(sr);b.appendChild(si)}
   const g=el('div','grid');b.appendChild(g);
   const have=new Set(((ST.groups||[]).find(x=>x.provider==='ollama')||{models:[]}).models.map(m=>m.id));
-  function draw(){g.innerHTML='';cat.models.filter(m=>(MD.filter==='all'||m.tags.includes(MD.filter))&&(!MD.q||m.name.includes(MD.q.toLowerCase()))).forEach(m=>{
+  function strataCard(m){const c=el('div','pcard');c.dataset.strataModel=m.id;const fitc={great:'var(--ok)',ok:'var(--accentText)','too big':'var(--bad)',unknown:'var(--dim)'}[m.fit];
+    c.appendChild(el('h4',null,'<span style="flex:1">'+esc(m.name)+'</span><span class="meta" style="color:'+fitc+'">'+({great:'fits this PC',ok:'tight',"too big":'needs more memory',unknown:''}[m.fit])+'</span>'));
+    c.appendChild(el('p',null,esc(m.desc)));c.appendChild(el('div','meta','needs ~'+m.mem_gb+' GB of RAM + video memory - download '+esc(m.dl)+' - runs on Strata'));
+    const bar=el('div','bar','<i></i>');const msg=el('div','meta','');const inst=cat.strata&&cat.strata.installed;const serving=(ST.groups||[]).some(x=>x.provider==='strata');
+    const bt=el('button','btn sm pri',inst?'Download with Strata':'Get Strata first');
+    bt.onclick=async()=>{if(!inst){openLink((cat.strata&&cat.strata.releases)||'https://github.com/Niko1221/Strata/releases/latest');return}
+      if(!confirm(m.name+' is a very large download ('+m.dl+') and needs about '+m.mem_gb+' GB of memory. Start now?'))return;
+      bt.disabled=true;bt.textContent='Working...';let err=null,fin=false;bar.firstChild.style.width='4%';
+      await sseJson('/api/strata/install',{model:m.id},ev=>{if(ev.error){err=ev.error;msg.textContent='Error: '+ev.error}else{if(ev.status)msg.textContent=ev.status;if(ev.done)fin=true}});
+      if(fin){bar.firstChild.style.width='100%';bt.textContent='Serving';await loadModels(true)}else{bt.disabled=false;bt.textContent='Download with Strata'}};
+    c.appendChild(bt);const pl=linkEl(m.url,'Strata page');pl.className='btn sm';pl.style.marginLeft='6px';c.appendChild(pl);c.appendChild(bar);c.appendChild(msg);return c}
+  function draw(){g.innerHTML='';cat.models.filter(m=>(MD.filter==='all'||m.tags.includes(MD.filter))&&(!MD.q||m.name.toLowerCase().includes(MD.q.toLowerCase()))).forEach(m=>{
+    if(m.engine==='strata'){g.appendChild(strataCard(m));return}
     const c=el('div','pcard');const fitc={great:'var(--ok)',ok:'var(--accentText)','too big':'var(--bad)',unknown:'var(--dim)'}[m.fit];
     c.appendChild(el('h4',null,'<span style="flex:1">'+esc(m.name)+'</span><span class="meta" style="color:'+fitc+'">'+({great:'runs great',ok:'runs (slower)','too big':'too big for this PC',unknown:''}[m.fit])+'</span>'));
     c.appendChild(el('p',null,esc(m.desc)));c.appendChild(el('div','meta','~'+m.gb+' GB - '+m.tags.join(', ')+(m.tools?' - can edit files':' - chat only')));

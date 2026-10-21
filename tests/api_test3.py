@@ -264,14 +264,14 @@ ok("NVIDIA/Intel names are not mistaken for AMD", ollama_mgr.parse_win_gpus("NVI
 ok("AMD backend note mentions ROCm and Vulkan", "ROCm" in ollama_mgr.gpu_backend({"vendor": "amd"}) and "Vulkan" in ollama_mgr.gpu_backend({"vendor": "amd"}))
 ok("fit uses AMD video memory", ollama_mgr.fit(9.0, {"vram_gb": 16.0, "ram_gb": 32.0}) == "great")
 cat = J("/api/ollama/catalog")
-ok("model library has 70+ models, each with an ollama.com link", len(cat["models"]) >= 70 and all(m["url"].startswith("https://ollama.com/library/") for m in cat["models"]) and cat["library"].startswith("https://ollama.com"))
+ok("model library has 70+ models, each with an ollama.com link", len([m for m in cat["models"] if not m.get("engine")]) >= 70 and all(m["url"].startswith("https://ollama.com/library/") for m in cat["models"] if not m.get("engine")) and cat["library"].startswith("https://ollama.com"))
 ok("hardware reports vendor and graphics backend note", "vendor" in cat["hardware"] and cat["hardware"]["backend"])
 lk = J("/api/links")
 ids = {l["id"] for l in lk["links"]}
 ok("download links exist for Forge, ComfyUI, A1111, Ollama, LM Studio, ffmpeg, Claude Code", {"forge", "comfyui", "a1111", "ollama", "lmstudio", "ffmpeg", "claude-code"} <= ids and all(l["url"].startswith("https://") for l in lk["links"]))
 am = {l["id"]: l for l in software.links("amd")}
 ok("AMD users get the AMD builds of Forge, A1111 and ComfyUI", "amdgpu-forge" in am["forge"]["url"] and "amdgpu" in am["a1111"]["url"] and "AMD" in am["comfyui"]["amd_note"] and am["forge"]["nvidia_url"].endswith("stable-diffusion-webui-forge"))
-ok("non-AMD users get the standard links", software.links("nvidia")[8]["url"].endswith("stable-diffusion-webui-forge"))
+ok("non-AMD users get the standard links", {l["id"]: l for l in software.links("nvidia")}["forge"]["url"].endswith("stable-diffusion-webui-forge"))
 open(os.path.join(HERE, "open_urls.log"), "w").close()
 ok("open-url accepts allowed https sites", J("/api/open-url", {"url": "https://ollama.com/download"}).get("ok") and "ollama.com/download" in open(os.path.join(HERE, "open_urls.log")).read())
 ok("open-url refuses other hosts, http and file links", all("error" in J("/api/open-url", {"url": u}) for u in ["https://evil.example.com/x", "http://ollama.com/", "file:///etc/passwd", "javascript:alert(1)"]))
@@ -394,4 +394,16 @@ eh = os.path.join(HERE, "work", "emptyhome"); os.makedirs(eh, exist_ok=True)
 ne = subprocess.run([sys.executable, "-c", "import claude_code as c;print(c.exe())"], capture_output=True, text=True,
                     env=dict(os.environ, HOME=eh, USERPROFILE=eh, PATH="/nonexistent", MARCHAND_CLAUDE="", MARCHAND_HOME=eh + "/m", PYTHONPATH=os.path.dirname(HERE)), cwd=os.path.dirname(HERE)).stdout.strip()
 ok("without a subscription program on the PC no subscription models are offered", ne == "None", ne)
+
+sm = [m for m in J("/api/ollama/catalog")["models"] if m.get("engine") == "strata"]
+ok("Strata's models are listed in the library (9 entries with memory needs and a fit label)", len(sm) == 9 and all(m["mem_gb"] > 0 and m["fit"] and m["id"] for m in sm) and {"q2_0", "gyro-s", "iq3_s"} <= {m["id"] for m in sm}, [m["id"] for m in sm])
+ok("Strata's smallest model needs 27.6 GB, the biggest size 54.8 GB", {m["id"]: m["mem_gb"] for m in sm}["gyro-s"] == 27.6 and {m["id"]: m["mem_gb"] for m in sm}["iq3_s"] == 54.8)
+ok("catalog reports that the Strata program is installed", J("/api/ollama/catalog")["strata"]["installed"] is True)
+ok("Strata is a known local server", "strata" in providers.LOCAL_SERVERS)
+sv = events("/api/strata/install", {"model": "gyro-s"})
+ok("installing a Strata model streams Strata's progress and ends done", any("Downloading" in (e.get("status") or "") for e in sv) and sv[-1].get("done") and not any(e.get("error") for e in sv), sv[-2:])
+ok("ANSI colour codes from Strata are stripped", not any("\x1b" in (e.get("status") or "") for e in sv))
+ok("installing a Strata model connects Marchand to Strata (provider enabled)", J("/api/settings")["providers"].get("strata", {}).get("enabled") is True)
+bad = events("/api/strata/install", {"model": "not-a-model"})
+ok("an unknown Strata model gives a clear error", bad[-1].get("error") and "does not know" in bad[-1]["error"], bad[-1:])
 print("ALL OK (%d checks)" % n[0])

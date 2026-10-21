@@ -585,6 +585,17 @@ with sync_playwright() as p:
         pg.click("#reAddBox [data-pop=xai]"); pg.wait_for_selector("#reAddBox [data-pop=xai] + .popf input"); pg.click("#reAddBox [data-pop=xai] + .popf button"); assert "Paste your key" in pg.inner_text("#reAddBox")
         pg.click("#reAdd"); assert not pg.is_visible("#reAddBox")
     step("Reverse engineering: Add AI / subscription AI button under the teacher list; connected subscription models listed", t_re_add_ai)
+    def t_strata_models():
+        tab("Models"); pg.click(".pnav div:has-text('Download models')"); pg.wait_for_selector(".pill[data-filter=strata]")
+        pg.click(".pill[data-filter=strata]"); pg.wait_for_selector("[data-strata-info]"); assert "Strata" in pg.inner_text("[data-strata-info]") and "Strata is installed" in pg.inner_text("[data-strata-info]")
+        cards = pg.eval_on_selector_all("[data-strata-model]", "e=>e.map(x=>x.dataset.strataModel)"); assert len(cards) == 9 and "gyro-s" in cards and "q2_0" in cards, cards
+        txt = pg.inner_text("[data-strata-model=gyro-s]"); assert "27.6 GB" in txt and "58.5 GB" in txt and "Download with Strata" in txt, txt
+        assert pg.query_selector(".pcard:has-text('qwen2.5-coder:1.5b')") is None
+        pg.click("[data-strata-model=gyro-s] button:has-text('Download with Strata')")
+        pg.wait_for_function("document.querySelector('[data-strata-model=gyro-s] button').textContent==='Serving'", timeout=30000)
+        assert "Strata is serving the model" in pg.inner_text("[data-strata-model=gyro-s]")
+        pg.click(".pill[data-filter=all]"); pg.wait_for_selector(".pcard:has-text('qwen2.5-coder:1.5b')"); assert pg.query_selector("[data-strata-model=q2_0]")
+    step("Models > Download models lists Strata's big models (own filter), downloads one through Strata and connects", t_strata_models)
     def t_plus_menu():
         tab("Chat"); pg.click("#plusBtn"); pg.wait_for_selector("#plusMenu.on")
         items = pg.eval_on_selector_all("#plusMenu .pi", "e=>e.map(x=>x.dataset.item)"); assert items[:5] == ["files", "folder", "slash", "connectors", "plugins"], items
