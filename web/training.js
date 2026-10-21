@@ -17,16 +17,32 @@ function pickTasks(mode,allT,sel,quick){const av=allT.filter(t=>t.builtin&&t.ava
   if(mode==='quick')return quick;if(mode==='full')return av.map(t=>t.id);if(mode==='re')return av.filter(t=>t.lang==='reverse').map(t=>t.id);
   if(mode==='langs'){const seen={};return av.filter(t=>t.lang!=='reverse'&&!seen[t.lang]&&(seen[t.lang]=1)).map(t=>t.id)}
   return av.filter(t=>sel.has(t.lang)).map(t=>t.id)}
+function teacherCard(b,cloud){
+  const card=el('div','pcard tcard');card.dataset.teachers='1';const sub=cloud.find(g=>g.provider==='claude-code');const keyed=cloud.filter(g=>g.provider!=='claude-code'&&g.models.length);
+  card.appendChild(el('h4',null,'1. Your stronger AI (the teacher)'));
+  const st=el('div','tstat');
+  if(sub)st.appendChild(el('div',null,'<span style="color:var(--ok)">&#10004;</span> <b>Your AI subscription</b> is connected. Marchand found it on this PC automatically.'));
+  keyed.forEach(g=>st.appendChild(el('div',null,'<span style="color:var(--ok)">&#10004;</span> <b>'+esc(g.label)+'</b> is connected ('+g.models.length+' models).')));
+  if(!sub&&!keyed.length)st.appendChild(el('div','note','No stronger AI is connected yet. Add one below, or let Marchand look for your subscription.'));
+  card.appendChild(st);
+  card.appendChild(el('div','psec','Add your AI: pick a service, paste your key, press Connect'));
+  const list=el('div','mpop-inline');card.appendChild(list);MP.type='all';popRows(list,null,()=>renderTraining());
+  if(!list.firstChild)list.appendChild(el('div','note','All the popular services are already connected.'));
+  const more=el('button','btn sm','More services and local servers...');more.onclick=()=>{MD.sec='cloud';showView('models')};card.appendChild(more);
+  card.appendChild(el('div','psec','Have a subscription instead of a key?'));
+  agentSearch(card,()=>renderTraining(),!sub&&!keyed.length);
+  b.appendChild(card)}
 async function trQuick(b){
   await loadModels();const live=(await api('/api/training/sessions')).find(s=>s.status==='running');
   if(TRS.view||live)return trLive(b,TRS.view||live.id);
   const cloud=(ST.groups||[]).filter(g=>g.provider!=='ollama'&&!LOCALP.includes(g.provider));const cc=cloud.find(g=>g.provider==='claude-code');const local=(ST.groups||[]).find(g=>g.provider==='ollama');
   const s=await api('/api/settings');
   b.appendChild(el('div','hero','<h2>Train your AI with a stronger AI</h2><p>The stronger AI works through '+'real coding tasks with your local AI: your AI tries each one, the tests decide pass or fail, and the stronger AI explains every mistake, writes the lessons and shows the right solution. Then your AI is tested again so you see the improvement. Press <b>Save AI</b> at the end to keep the result.</p>'));
+  teacherCard(b,cloud);
   if(!(ST.groups||[]).some(g=>g.provider!=='claude-code'&&g.models.length)){b.appendChild(el('div','err','You have no local model yet. Add one in the "Add your model" tab, or install Marchand Coder.'));return}
-  if(!cloud.length){b.appendChild(el('div','err','No teacher available. Install Claude Code and log in to use your Claude subscription, or add a key in Models &gt; Cloud and local servers.'));return}
+  if(!cloud.some(g=>g.models.length))return;
   const f=el('div','pform quick','<div class="trgrid"><div><label>Your AI (the student)</label><select id="qStu"></select></div><div><label>Teacher</label><select id="qTea"></select></div></div>'+
-    '<div class="trgrid"><div><label>Teacher effort</label><select id="qEff"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="xhigh">Extra high</option><option value="max">Max (ultra)</option></select><div class="meta">For Claude on your subscription. Higher effort teaches better and uses more of your limits.</div></div>'+
+    '<div class="trgrid"><div><label>Teacher effort</label><select id="qEff"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="xhigh">Extra high</option><option value="max">Max (ultra)</option></select><div class="meta">For a subscription teacher. Higher effort teaches better and uses more of your limits.</div></div>'+
     '<div><label>How long?</label><select id="qLen"><option value="quick">Quick: 6 Python tasks (10-20 min)</option><option value="langs">Every language: 1 task each (about 30 min)</option><option value="re">Reverse engineering: 9 tasks</option><option value="pick">Pick languages myself...</option><option value="full">Everything my PC can run (1-3 hours)</option></select></div></div><div id="qPick" style="display:none"></div>'+
     '<div class="prow" style="margin-top:16px"><button class="btn pri big" id="qGo">Start teaching</button><span class="err" id="qErr"></span></div>'+
     '<div class="meta">Uses the Advanced training defaults: 2 rounds, teacher demonstrations, lessons condensed at the end. Code runs in a sandbox folder on this PC.</div>');b.appendChild(f);
@@ -41,7 +57,7 @@ async function trQuick(b){
   const missing=Object.values(langs).filter(v=>v.available<v.tasks);if(missing.length)f.appendChild(el('div','meta','Some languages are locked because their tools are missing on this PC ('+missing.map(v=>esc(v.name)+': '+esc(v.why)).join('; ')+'). Install them to unlock more tasks.'));
   f.querySelector('#qGo').onclick=async()=>{const teacherId=f.querySelector('#qTea').value;await api('/api/settings',{teacher_model:teacherId,cc_effort:f.querySelector('#qEff').value});
     const quick=['pagination','mutable_default','csv_quotes','sql_injection','rename','dedupe_perf'];
-    const r=await api('/api/training/start',{name:'Taught by '+teacherId.replace('claude-code::','Claude ').replace('::',' '),student:f.querySelector('#qStu').value,teacher:teacherId,demos:'teacher',rounds:2,max_steps:25,learn:true,keep_successes:true,persona:true,consolidate:true,tasks:pickTasks(f.querySelector('#qLen').value,allT,QS,quick)});
+    const r=await api('/api/training/start',{name:'Taught by '+teacherId.split('::').pop(),student:f.querySelector('#qStu').value,teacher:teacherId,demos:'teacher',rounds:2,max_steps:25,learn:true,keep_successes:true,persona:true,consolidate:true,tasks:pickTasks(f.querySelector('#qLen').value,allT,QS,quick)});
     if(r.error){f.querySelector('#qErr').textContent=r.error;return}TRS.view=r.id;renderTraining()}}
 async function trTrain(b){
   await loadModels();const live=(await api('/api/training/sessions')).find(s=>s.status==='running');

@@ -569,6 +569,14 @@ with sync_playwright() as p:
     def t_about_build():
         tab("Chat"); pg.click("#setBtn"); pg.wait_for_selector("#sAbout"); assert "build " in pg.inner_text("#sAbout") and "PolyForm" in pg.inner_text("#sAbout"), pg.inner_text("#sAbout"); pg.click("#mSet [data-close]")
     step("Settings About shows the build", t_about_build)
+    def t_teacher_card():
+        tab("Training"); pg.click(".pnav div:has-text('Train with stronger AI')"); pg.wait_for_selector("[data-teachers]")
+        txt = pg.inner_text("[data-teachers]"); assert "Your stronger AI (the teacher)" in txt and "found it on this PC automatically" in txt, txt[:300]
+        pops = pg.eval_on_selector_all("[data-teachers] [data-pop]", "e=>e.map(x=>x.dataset.pop)"); assert "openai" in pops and "xai" in pops and "gemini" in pops, pops
+        pg.click("[data-teachers] [data-pop=xai]"); pg.wait_for_selector("[data-teachers] [data-pop=xai] + .popf input"); pg.click("[data-teachers] [data-pop=xai] + .popf button"); assert "Paste your key" in pg.inner_text("[data-teachers]")
+        assert pg.query_selector("[data-teachers] [data-agents]") and "More services" in pg.inner_text("[data-teachers]")
+        assert "Claude" not in pg.inner_text(".hero") and "Claude" not in pg.inner_text(".quick .meta")
+    step("Train with stronger AI: teacher card with connected AIs, add-your-AI list with key links, subscription search", t_teacher_card)
     def t_plus_menu():
         tab("Chat"); pg.click("#plusBtn"); pg.wait_for_selector("#plusMenu.on")
         items = pg.eval_on_selector_all("#plusMenu .pi", "e=>e.map(x=>x.dataset.item)"); assert items[:5] == ["files", "folder", "slash", "connectors", "plugins"], items

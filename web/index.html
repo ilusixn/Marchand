@@ -417,7 +417,7 @@ const POP=[['openai','ChatGPT (OpenAI)','GPT-5, GPT-5 Codex, GPT-5 mini','sk-...
  ['mistral','Mistral','Mistral Large, Codestral','','https://console.mistral.ai/api-keys','cloud'],
  ['groq','Groq','Very fast hosted open models','gsk_...','https://console.groq.com/keys','cloud'],
  ['openrouter','OpenRouter','One key, hundreds of models','sk-or-...','https://openrouter.ai/keys','cloud']];
-function popRows(box,limit){const have=new Set((ST.groups||[]).map(g=>g.provider));
+function popRows(box,limit,onDone){const have=new Set((ST.groups||[]).map(g=>g.provider));
   const list=POP.filter(p=>!have.has(p[0])&&(MP.type==='all'||MP.type===p[5]));if(!list.length)return 0;
   box.appendChild(el('div','pnote','Popular AIs: connect with your own key'));
   list.slice(0,limit||list.length).forEach(([id,name,hint,ph,url])=>{const w=el('div');const d=el('div','pi','<span style="flex:1"><b>'+esc(name)+'</b><small>'+esc(hint)+'</small></span><span class="k">Connect ›</span>');d.dataset.pop=id;w.appendChild(d);
@@ -426,7 +426,7 @@ function popRows(box,limit){const have=new Set((ST.groups||[]).map(g=>g.provider
     d.onclick=e=>{e.stopPropagation();f.style.display=f.style.display==='none'?'flex':'none';if(f.style.display==='flex')k.focus()};
     go.onclick=async e=>{e.stopPropagation();if(!k.value.trim()){msg.textContent='Paste your key first.';return}msg.textContent='Testing...';const cur=await api('/api/settings');const np=Object.assign({},cur.providers||{});np[id]={key:k.value.trim()};await api('/api/settings',{providers:np});
       const r=await api('/api/providers/test',{provider:id});await loadModels(true);const g=(ST.groups||[]).find(x=>x.provider===id);
-      if(r.ok&&g&&g.models.length){chooseModel(g.models[0].id)}else{msg.textContent='Could not connect: check the key.'}};
+      if(r.ok&&g&&g.models.length){if(onDone)onDone(g);else chooseModel(g.models[0].id)}else{msg.textContent='Could not connect: check the key.'}};
     box.appendChild(w)});return list.length}
 function mpList(){const out=[];(ST.groups||[]).forEach(g=>g.models.forEach(m=>{const ok=MP.type==='all'||(MP.type==='mine'?m.mine:(g.kind===MP.type&&!m.mine));if(ok)out.push({id:m.id,n:m.name,g:m.mine?'My own AI':g.label,size:m.size,mine:!!m.mine})}));
   out.sort((a,b)=>(b.id===ST.model)-(a.id===ST.model)||(b.mine-a.mine));return out}
