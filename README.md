@@ -5,7 +5,7 @@
 # Marchand Studio
 
 **The all-in-one desktop AI studio for your own PC.**
-Chat, code, make pictures and *train your own local AI* with a stronger AI as its teacher, all from one window.
+Chat, code, make pictures and *train your own local AI* with any model you like, all from one window, Follow your teacher provider's terms of use.
 
 [![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-ilusixne-2E5090?style=for-the-badge&logo=buymeacoffee&logoColor=white)](https://buymeacoffee.com/ilusixne)
 [![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-2E5090?style=for-the-badge)](LICENSE)
@@ -172,8 +172,7 @@ This bundles Python 3.12, the app and a small launcher, and produces `installer/
 5. Press **Save AI**: Marchand creates a new Ollama model that carries a careful persona, the condensed lessons and a few worked examples.
 
 **Honest limits:** this changes the model's *instructions, lessons and examples*, not its weights. A small local model gets better habits and better
-results on tasks like the ones it practised, but it does not become a top cloud AI. Only **GPU fine-tuning** changes weights. For the strongest results, pick
-the stronger AI directly. Its requests count against your plan limits.
+results on tasks like the ones it practised, but it does not become a top cloud AI. Only **GPU fine-tuning** changes weights, Follow your teacher provider's terms of use.
 
 ---
 
@@ -227,9 +226,6 @@ terms.
 
 **You may not** sell it, bundle it into a paid product or use it commercially without the author's written permission. Contact the author for a
 commercial license.
-
-The **name "Marchand Studio" and the M logo are not part of the license**: a fork or modified copy must use its own name and logo and say it is based on
-Marchand Studio (see [`TRADEMARK.md`](TRADEMARK.md)).
 
 Copyright (c) 2026 ilusixne. The bundled Python in the Windows installer is licensed under the Python Software Foundation License (included with it).
 
